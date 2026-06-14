@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Pengaturan Bahasa</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .slide-in { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .lang-card { transition: all 0.2s ease-in-out; border: 2px solid transparent; }
+        .lang-card.selected { background-color: #D8F6FF !important; border-color: #0064F0 !important; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in">
+        
+        <div class="w-full h-[120px] bg-[#F5F5F5] pt-12 px-4 flex items-center shadow-sm z-20 shrink-0">
+            <a href="profil.html" class="text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h1 id="txt-header" class="text-[20px] font-bold text-[#0064F0]">Ubah Bahasa</h1>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar z-10 flex flex-col px-4 pt-6 pb-28 gap-3 relative">
+            <p id="txt-sub-header" class="text-[12px] font-medium text-gray-500 mb-2 ml-1">Pilih bahasa pengantar yang ingin digunakan dalam aplikasi:</p>
+
+            <div id="lang-id" onclick="pilihBahasa('id')" class="lang-card w-full h-[68px] bg-[#F5F5F5] hover:bg-gray-100 rounded-[12px] flex items-center justify-between px-4 cursor-pointer shadow-sm">
+                <div class="flex items-center gap-3">
+                    <span class="text-[24px]">🇮🇩</span>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-[13px] text-black">Bahasa Indonesia</span>
+                        <span class="text-[10px] text-gray-400 font-medium">Bawaan Sistem</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="lang-en" onclick="pilihBahasa('en')" class="lang-card w-full h-[68px] bg-[#F5F5F5] hover:bg-gray-100 rounded-[12px] flex items-center justify-between px-4 cursor-pointer shadow-sm">
+                <div class="flex items-center gap-3">
+                    <span class="text-[24px]">🇬🇧</span>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-[13px] text-black">English</span>
+                        <span class="text-[10px] text-gray-400 font-medium">English Language</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 w-full h-[89px] bg-[#F5F5F5] flex flex-col justify-center px-8 z-20 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] border-t border-gray-200">
+            <button id="btn-simpan-bahasa" onclick="simpanPilihanBahasa()" class="w-full h-[47px] bg-[#0141A3] hover:bg-blue-800 rounded-[10px] flex items-center justify-center transition-all active:scale-95 shadow-sm">
+                <span id="txt-btn-save" class="text-white font-semibold text-[13px] tracking-wide">SIMPAN PERUBAHAN</span>
+            </button>
+        </div>
+
+        <div id="successModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="successModalContent" class="bg-white w-[280px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 id="modal-title" class="text-[18px] font-bold text-black mb-2 text-center">Berhasil!</h3>
+                <p id="modal-message" class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">Bahasa aplikasi berhasil diperbarui.</p>
+                <button id="modal-btn" onclick="tutupModalSukses()" class="w-full bg-[#0064F0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ========================================================
+        // KAMUS BAHASA (DICTIONARY) UNTUK DEMO PROTOTYPE
+        // ========================================================
+        const kamusBahasa = {
+            id: {
+                header: "Ubah Bahasa",
+                subHeader: "Pilih bahasa pengantar yang ingin digunakan dalam aplikasi:",
+                btnSave: "SIMPAN PERUBAHAN",
+                modalTitle: "Berhasil!",
+                modalMsg: "Bahasa aplikasi berhasil diperbarui.",
+                modalBtn: "Mengerti"
+            },
+            en: {
+                header: "Change Language",
+                subHeader: "Select the language you want to use in the application:",
+                btnSave: "SAVE CHANGES",
+                modalTitle: "Success!",
+                modalMsg: "Application language updated successfully.",
+                modalBtn: "Got it"
+            }
+        };
+
+        let bahasaTerpilih = "id";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Membaca status bahasa dari memori jika pengguna pernah menyimpannya
+            const savedLang = localStorage.getItem('app_language') || 'id';
+            pilihBahasa(savedLang);
+        });
+
+        function pilihBahasa(langCode) {
+            bahasaTerpilih = langCode;
+
+            // Mereset efek highlight semua tombol pilihan
+            const allCards = document.querySelectorAll('.lang-card');
+            allCards.forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Memberikan efek highlight (aktif) pada bahasa yang dipilih
+            const selectedCard = document.getElementById(`lang-${langCode}`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+
+            // SIMULASI PROTOTYPE: Mengubah teks secara langsung di layar saat diklik
+            const teks = kamusBahasa[langCode];
+            document.getElementById('txt-header').textContent = teks.header;
+            document.getElementById('txt-sub-header').textContent = teks.subHeader;
+            document.getElementById('txt-btn-save').textContent = teks.btnSave;
+        }
+
+        function simpanPilihanBahasa() {
+            // Simpan konfigurasi ke memori browser
+            localStorage.setItem('app_language', bahasaTerpilih);
+
+            // Update bahasa khusus untuk teks di dalam Pop-up Modal Sukses
+            const teks = kamusBahasa[bahasaTerpilih];
+            document.getElementById('modal-title').textContent = teks.modalTitle;
+            document.getElementById('modal-message').textContent = teks.modalMsg;
+            document.getElementById('modal-btn').textContent = teks.modalBtn;
+
+            // Munculkan Modal Sukses
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('successModalContent');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModalSukses() {
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('successModalContent');
+            
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                
+                // Setelah selesai, pengguna dikembalikan ke halaman profil.
+                window.location.href = 'profil.html';
+            }, 300);
+        }
+    </script>
+</body>
+</html>
