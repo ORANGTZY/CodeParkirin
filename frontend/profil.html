@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F1F1F1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Profil Pengguna</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .nav-curve {
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 86px; 
+            height: 38px;
+            background-color: #F1F1F1;
+            border-bottom-left-radius: 43px;
+            border-bottom-right-radius: 43px;
+            border: 1px solid #D9D9D9; 
+            border-top: none;
+            z-index: 10;
+        }
+
+        .nav-curve::before, .nav-curve::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            background-color: transparent;
+        }
+
+        .nav-curve::before {
+            left: -14px;
+            border-top-right-radius: 14px;
+            border-right: 1px solid #D9D9D9;
+            border-top: 1px solid #D9D9D9;
+            box-shadow: 4px -4px 0 4px #F1F1F1;
+        }
+
+        .nav-curve::after {
+            right: -14px;
+            border-top-left-radius: 14px;
+            border-left: 1px solid #D9D9D9;
+            border-top: 1px solid #D9D9D9;
+            box-shadow: -4px -4px 0 4px #F1F1F1;
+        }
+        
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden fade-in">
+        
+        <div class="flex-grow overflow-y-auto hide-scrollbar pb-24">
+            
+            <div class="w-full pt-10 px-5 mb-4">
+                <h1 class="text-[16px] font-bold text-black uppercase tracking-wide">Akun</h1>
+            </div>
+
+            <div class="w-full h-[100px] bg-[#D8F6FF] px-5 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-[59px] h-[59px] rounded-full overflow-hidden border-2 border-white shadow-sm bg-gray-300">
+                        <img id="profile-pic" src="https://i.pravatar.cc/150?img=11" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <span id="profile-name" class="font-semibold text-[13px] text-black">Memuat...</span>
+                            <a href="edit-profil.html">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-[14px] w-[14px] text-black cursor-pointer hover:opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                            </a>
+                        </div>
+                        <span id="profile-phone" class="font-medium text-[12px] text-black mt-1">Memuat...</span>
+                        <span id="profile-email" class="font-medium text-[12px] text-black mt-[2px]">Memuat...</span>
+                    </div>
+                </div>
+
+                <div class="bg-[#00D5FF] px-2 py-1 rounded-[10px] flex items-center gap-1 shadow-sm mt-[-40px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-[10px] w-[10px] text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <span class="display-poin text-[9px] font-bold text-white">Points : 0</span>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="px-5 text-[16px] font-bold text-black mb-2">Pengaturan Akun</h2>
+                
+                <a href="atur-pin.html" class="px-5 w-full h-[50px] border-b border-[#D9D9D9] flex items-center justify-between cursor-pointer hover:bg-gray-200 transition-colors block">
+                    <div class="flex items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="6" width="18" height="12" rx="2" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 10v4h2v-4H7zm4 4h2v-2h-2v2zm0-4h2v2h-2v-2zm4 4h2v-4h-2v4z" />
+                        </svg>
+                        <span class="font-semibold text-[14px] text-black">Atur Pin</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0C172B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </a>
+
+                <a href="kendaraan.html" class="px-5 w-full h-[50px] border-b border-[#D9D9D9] flex items-center justify-between cursor-pointer hover:bg-gray-200 transition-colors block">
+                    <div class="flex items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8M5 11h14l-1.5 5h-11L5 11zM7 11V7a2 2 0 012-2h6a2 2 0 012 2v4M6 16v2a1 1 0 001 1h2a1 1 0 001-1v-2m4 0v2a1 1 0 001 1h2a1 1 0 001-1v-2" />
+                        </svg>
+                        <span class="font-semibold text-[14px] text-black">Kendaraan Anda</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0C172B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </a>
+
+                <div class="px-5 w-full h-[50px] border-b border-[#D9D9D9] flex items-center justify-between cursor-pointer hover:bg-gray-200 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                        </svg>
+                        <span class="font-semibold text-[14px] text-black">Ganti Bahasa</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0C172B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="px-5 text-[16px] font-bold text-black mb-2">Bantuan</h2>
+                
+                <a href="buku-panduan.html" class="px-5 w-full h-[50px] border-b border-[#D9D9D9] flex items-center justify-between cursor-pointer hover:bg-gray-200 transition-colors block">
+                    <div class="flex items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        <span class="font-semibold text-[14px] text-black">Buku Panduan</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0C172B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </a>
+
+                <a href="faq.html" class="px-5 w-full h-[50px] border-b border-[#D9D9D9] flex items-center justify-between cursor-pointer hover:bg-gray-200 transition-colors block">
+                    <div class="flex items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        <span class="font-semibold text-[14px] text-black">FAQ</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0C172B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </a>
+
+                <a href="layanan-pelanggan.html" class="px-5 w-full h-[50px] border-b border-[#D9D9D9] flex items-center justify-between cursor-pointer hover:bg-gray-200 transition-colors block">
+                    <div class="flex items-center gap-4">
+                        <img src="assets/img/elemencs.png" alt="Customer Service" class="h-6 w-6 object-contain">
+                        <span class="font-semibold text-[14px] text-black">Customer Service</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0C172B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+
+            <div class="mt-8 mb-8">
+                <h2 class="px-5 text-[16px] font-bold text-black mb-2">Lainnya</h2>
+                
+                <a href="statistik.html" class="px-5 w-full h-[50px] border-b border-[#D9D9D9] flex items-center justify-between cursor-pointer hover:bg-gray-200 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <span class="font-semibold text-[14px] text-black">Statistik Pengguna</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0C172B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </a>
+                
+                <div onclick="prosesLogout()" class="px-5 w-full h-[50px] flex items-center justify-between cursor-pointer hover:bg-red-50 transition-colors mt-2 rounded-lg">
+                    <div class="flex items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#E53935]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span class="font-bold text-[14px] text-[#E53935]">Keluar Akun</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 w-full max-w-[402px] h-[75px] bg-[#F5F5F5] border-t border-[#D9D9D9] rounded-t-[19px] z-20 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+            <div class="relative w-full h-full px-8 flex items-center justify-center">
+                
+                <div class="nav-curve"></div>
+
+                <div class="flex w-full justify-between items-end pb-3 z-30">
+                    
+                    <a href="user-dashboard.html" class="flex flex-col items-center justify-end cursor-pointer relative z-30 w-[60px] hover:opacity-80 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-[28px] w-[28px] text-[#D9D9D9] mb-[5px]" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
+                        </svg>
+                        <span class="text-[#D9D9D9] font-semibold text-[12px] leading-none">Utama</span>
+                    </a>
+
+                    <div class="flex flex-col items-center justify-end relative z-30 w-[60px]">
+                        <div class="h-[28px] mb-[5px]"></div>
+                        <span class="text-[#D9D9D9] font-semibold text-[12px] leading-none">Tiket</span>
+                    </div>
+
+                    <a href="profil.html" class="flex flex-col items-center justify-end cursor-pointer relative z-30 w-[60px]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-[28px] w-[28px] text-[#00D1FF] mb-[5px]" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span class="text-[#00D1FF] font-semibold text-[12px] leading-none">Pengguna</span>
+                    </a>
+                </div>
+
+                <a href="tiket.html" class="flex flex-col items-center cursor-pointer absolute top-[-26px] left-1/2 -translate-x-1/2 z-40 transition-transform active:scale-95">
+                    <div class="bg-[#0141A3] w-[61px] h-[61px] rounded-full flex flex-col items-center justify-center shadow-[0_5px_10px_rgba(1,65,163,0.3)]">
+                        <div class="w-[32px] h-[29px] flex flex-col justify-between overflow-hidden rounded-[3px]">
+                            <div class="w-full h-[13px] bg-[#F5F5F5]"></div>
+                            <div class="w-full h-[3px] bg-transparent"></div>
+                            <div class="w-full h-[13px] bg-[#F5F5F5]"></div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div id="logoutModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="logoutModalContent" class="bg-white w-[300px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                
+                <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#E53935]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </div>
+                
+                <h3 class="text-[18px] font-bold text-black mb-2">Keluar Akun?</h3>
+                <p class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">
+                    Apakah Anda yakin ingin keluar? Anda harus login kembali untuk masuk ke aplikasi.
+                </p>
+                
+                <div class="flex w-full gap-3">
+                    <button onclick="tutupModalLogout()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-[12px] text-[12px] transition-colors active:scale-95">
+                        Batal
+                    </button>
+                    <button onclick="eksekusiLogout()" class="flex-1 bg-[#E53935] hover:bg-red-700 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">
+                        Ya, Keluar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Ambil data user dari localStorage
+            const userData = localStorage.getItem('user');
+            
+            if(userData) {
+                const user = JSON.parse(userData);
+                
+                // Menampilkan nama lengkap, nomor HP, dan Email sesuai data lokal
+                document.getElementById('profile-name').textContent = user.nama || "Pengguna";
+                document.getElementById('profile-email').textContent = user.email || "-";
+                
+                // Mengambil key yang BENAR: user.no_telepon (berdasarkan backend Login/Register)
+                // Fallback ke user.telepon jika versi lama masih tersimpan
+                document.getElementById('profile-phone').textContent = user.no_telepon || user.telepon || "-";
+
+                // Menampilkan Foto Profil jika ada di localStorage
+                const savedPic = localStorage.getItem('foto_profil_' + user.id);
+                    if(savedPic) {
+                        document.getElementById('profile-pic').src = savedPic;
+                    }
+            }
+        });
+
+        // Perbarui poin setiap kali halaman dimuat
+        document.addEventListener("DOMContentLoaded", () => {
+            tarikPoinTerbaru();
+        });
+
+        async function tarikPoinTerbaru() {
+            const userDataLocal = JSON.parse(localStorage.getItem('user'));
+            if(!userDataLocal) return;
+
+            try {
+                // Tarik poin asli dari Database MySQL
+                const response = await fetch(`http://localhost:3000/api/parkir/poin/${userDataLocal.id}`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Temukan semua elemen teks poin di layar dan ubah angkanya
+                    const elemenPoin = document.querySelectorAll('.display-poin');
+                    elemenPoin.forEach(el => {
+                        el.textContent = `Points: ${result.points}`; // Sesuaikan tulisan dengan desain 
+                    });
+
+                    // Perbarui juga data di localStorage agar sinkron
+                    userDataLocal.points = result.points;
+                    localStorage.setItem('user', JSON.stringify(userDataLocal));
+                }
+            } catch (error) {
+                console.error("Gagal sinkronisasi poin: ", error);
+            }
+        }
+
+        function prosesLogout() {
+            const modal = document.getElementById('logoutModal');
+            const modalContent = document.getElementById('logoutModalContent');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModalLogout() {
+            const modal = document.getElementById('logoutModal');
+            const modalContent = document.getElementById('logoutModalContent');
+            
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function eksekusiLogout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

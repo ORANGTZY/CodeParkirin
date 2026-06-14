@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Cara Undang Teman</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #F1F1F1;
+            font-family: 'Montserrat', sans-serif;
+            overscroll-behavior-y: none;
+            margin: 0;
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200">
+
+    <div class="w-full max-w-[402px] bg-[#F5F5F5] h-full relative flex flex-col shadow-2xl overflow-hidden slide-up">
+        
+        <!-- HEADER -->
+        <div class="bg-[#F5F5F5] w-full pt-10 pb-4 px-4 z-10">
+            <div class="flex items-center">
+                <!-- Tombol Back diarahkan kembali ke undang.html -->
+                <a href="undang.html" class="text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <h1 class="text-[20px] font-bold text-[#0064F0]">Undang dan Dapatkan</h1>
+            </div>
+        </div>
+
+        <!-- KONTEN UTAMA -->
+        <div class="flex-grow bg-[#F5F5F5] overflow-y-auto hide-scrollbar flex flex-col relative px-4 pt-6 pb-8">
+            
+            <h2 class="text-[32px] font-extrabold text-black text-center leading-[1.2] tracking-tight mb-4">
+                UNDANG<br>TEMAN DAN<br>DAPATKAN<br>HADIAHNYA!
+            </h2>
+
+            <p class="text-[11px] font-medium text-black text-center mb-10">
+                Ajak temanmu dan kalian akan mendapatkan poin!
+            </p>
+
+            <!-- BAGIAN 1: CARA MEMBAGIKAN -->
+            <div class="mb-8 w-full flex flex-col items-center">
+                <h3 class="text-[15px] font-semibold text-black mb-4">Cara membagikan kode anda</h3>
+                
+                <!-- Slider Navigasi -->
+                <div class="flex items-center justify-between w-full px-2">
+                    <!-- Panah Kiri (Pudar) -->
+                    <button class="text-[#0064F0] opacity-30 active:scale-90 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Konten Langkah -->
+                    <div class="flex items-center gap-3 flex-grow px-2">
+                        <!-- Lingkaran Angka -->
+                        <div class="w-[29px] h-[29px] flex-shrink-0 rounded-full border-[3px] border-[#0064F0] flex items-center justify-center">
+                            <span class="text-[10px] font-medium text-black">1</span>
+                        </div>
+                        <!-- Teks Penjelasan -->
+                        <p class="text-[10px] font-medium text-black leading-snug text-left">
+                            Buka halaman Undang & Dapatkan pada menu pengaturan
+                        </p>
+                    </div>
+
+                    <!-- Panah Kanan (Nyala) -->
+                    <button class="text-[#0064F0] active:scale-90 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- BAGIAN 2: CARA MENGGUNAKAN -->
+            <div class="mb-10 w-full flex flex-col items-center">
+                <h3 class="text-[15px] font-semibold text-black mb-4">Cara menggunakan kode anda</h3>
+                
+                <!-- Slider Navigasi -->
+                <div class="flex items-center justify-between w-full px-2">
+                    <!-- Panah Kiri (Pudar) -->
+                    <button class="text-[#0064F0] opacity-30 active:scale-90 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Konten Langkah -->
+                    <div class="flex items-center gap-3 flex-grow px-2">
+                        <!-- Lingkaran Angka -->
+                        <div class="w-[29px] h-[29px] flex-shrink-0 rounded-full border-[3px] border-[#0064F0] flex items-center justify-center">
+                            <span class="text-[10px] font-medium text-black">1</span>
+                        </div>
+                        <!-- Teks Penjelasan -->
+                        <p class="text-[10px] font-medium text-black leading-snug text-left">
+                            Install dan daftar akun PARKIRIN
+                        </p>
+                    </div>
+
+                    <!-- Panah Kanan (Nyala) -->
+                    <button class="text-[#0064F0] active:scale-90 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bagian Input dan Tombol Salin -->
+            <div class="flex items-center w-full gap-3 mt-auto mb-10">
+                <div class="flex-grow h-[44px] bg-[#F5F5F5] border-2 border-[#D9D9D9] rounded-[10px] flex items-center px-4">
+                    <span id="referralCode" class="font-medium text-[16px] text-black">9024191</span>
+                </div>
+                
+                <button onclick="copyCode()" class="h-[44px] px-6 bg-[#0062E6] hover:bg-blue-700 rounded-[30px] flex items-center justify-center shadow-md transition-all active:scale-95">
+                    <span class="font-medium text-[14px] text-white whitespace-nowrap">SALIN CODE</span>
+                </button>
+            </div>
+
+            <!-- Tombol Bawah -->
+            <div class="w-full pb-4">
+                <button class="w-full bg-[#0141A3] hover:bg-blue-900 text-white rounded-[10px] h-[47px] shadow-md transition-all active:scale-95 flex items-center justify-center">
+                    <span class="font-semibold text-[11px] tracking-wide">UNDANG LEBIH BANYAK TEMAN</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script Fungsionalitas -->
+    <script>
+        function copyCode() {
+            const codeText = document.getElementById('referralCode').innerText;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                alert("Kode Referral '" + codeText + "' berhasil disalin!");
+            }).catch(err => {
+                console.error('Gagal menyalin kode: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

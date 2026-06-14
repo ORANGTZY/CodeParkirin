@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F1F1F1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Atur PIN</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: #F1F1F1; 
+            margin: 0; 
+            overscroll-behavior-y: none;
+            user-select: none; /* Mencegah teks terblok saat memencet keypad dengan cepat */
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { 
+            from { opacity: 0; transform: translateX(20px); } 
+            to { opacity: 1; transform: translateX(0); } 
+        }
+
+        /* Efek saat tombol keypad ditekan */
+        .keypad-btn {
+            transition: background-color 0.1s, transform 0.1s;
+        }
+        .keypad-btn:active, .keypad-btn.keyboard-active {
+            background-color: #E5E5E5;
+            transform: scale(0.9);
+        }
+
+        /* Transisi warna titik PIN */
+        .pin-dot {
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .pin-dot.active {
+            background-color: #0064F0;
+            transform: scale(1.1);
+        }
+
+        /* Kelas kustom untuk menyembunyikan keypad ke bawah (menyisakan 30px) */
+        .keypad-hidden {
+            transform: translateY(calc(100% - 35px));
+        }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="w-full h-[120px] bg-[#F5F5F5] pt-12 px-4 flex items-center z-20 shrink-0">
+            <a href="profil.html" class="flex items-center text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-[31px] w-[31px] stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                <span class="ml-2 font-bold text-[20px] leading-[24px]">Atur PIN</span>
+            </a>
+        </div>
+
+        <div class="flex-grow flex flex-col justify-between relative z-10">
+            
+            <div onclick="showKeypad()" class="flex flex-col items-center w-full pt-16 pb-8 flex-grow cursor-pointer">
+                <h2 class="font-semibold text-[20px] leading-[24px] text-[#0F252A] mb-8">Buat Pin Baru</h2>
+                
+                <div class="flex gap-[20px]">
+                    <div id="dot-1" class="pin-dot w-[25px] h-[25px] rounded-full bg-[#D9D9D9]"></div>
+                    <div id="dot-2" class="pin-dot w-[25px] h-[25px] rounded-full bg-[#D9D9D9]"></div>
+                    <div id="dot-3" class="pin-dot w-[25px] h-[25px] rounded-full bg-[#D9D9D9]"></div>
+                    <div id="dot-4" class="pin-dot w-[25px] h-[25px] rounded-full bg-[#D9D9D9]"></div>
+                    <div id="dot-5" class="pin-dot w-[25px] h-[25px] rounded-full bg-[#D9D9D9]"></div>
+                    <div id="dot-6" class="pin-dot w-[25px] h-[25px] rounded-full bg-[#D9D9D9]"></div>
+                </div>
+                
+                <p id="hint-text" class="text-[10px] text-gray-400 mt-10 opacity-0 transition-opacity duration-300">Ketuk layar untuk memunculkan keypad</p>
+            </div>
+
+            <div id="keypad-container" class="w-full bg-white rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.08)] px-8 pt-2 pb-10 flex-shrink-0 transition-transform duration-300 ease-in-out">
+                
+                <div onclick="toggleKeypad(event)" class="w-full py-4 cursor-pointer flex justify-center group" title="Tarik ke bawah/atas">
+                    <div class="w-12 h-1.5 bg-gray-200 rounded-full group-hover:bg-gray-300 transition-colors"></div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-y-6 gap-x-8 text-center place-items-center">
+                    
+                    <button data-key="1" onclick="addNumber('1')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">1</button>
+                    <button data-key="2" onclick="addNumber('2')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">2</button>
+                    <button data-key="3" onclick="addNumber('3')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">3</button>
+
+                    <button data-key="4" onclick="addNumber('4')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">4</button>
+                    <button data-key="5" onclick="addNumber('5')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">5</button>
+                    <button data-key="6" onclick="addNumber('6')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">6</button>
+
+                    <button data-key="7" onclick="addNumber('7')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">7</button>
+                    <button data-key="8" onclick="addNumber('8')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">8</button>
+                    <button data-key="9" onclick="addNumber('9')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">9</button>
+
+                    <button class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#1D1D1B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                        </svg>
+                    </button>
+                    <button data-key="0" onclick="addNumber('0')" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center text-[28px] font-medium text-black">0</button>
+                    <button data-key="backspace" onclick="removeNumber()" class="keypad-btn w-16 h-16 rounded-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#546A7B]" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M6.707 4.879A3 3 0 018.828 4H15a3 3 0 013 3v6a3 3 0 01-3 3H8.828a3 3 0 01-2.12-.879l-4.415-4.414a1 1 0 010-1.414l4.414-4.414zm4 2.414a1 1 0 00-1.414 1.414L10.586 10l-1.293 1.293a1 1 0 101.414 1.414L12 11.414l1.293 1.293a1 1 0 001.414-1.414L13.414 10l1.293-1.293a1 1 0 00-1.414-1.414L12 8.586l-1.293-1.293z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div id="successModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="successModalContent" class="bg-white w-[280px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-[18px] font-bold text-black mb-2 text-center">Berhasil!</h3>
+                <p class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">PIN pengaman Anda berhasil disimpan.</p>
+                <button onclick="finishSetup()" class="w-full bg-[#0064F0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">
+                    Selesai
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentPin = "";
+        const MAX_PIN_LENGTH = 6;
+        let isKeypadVisible = true;
+
+        // ==========================================
+        // FUNGSI TOGGLE & HIDE/SHOW KEYPAD
+        // ==========================================
+        function toggleKeypad(event) {
+            if(event) event.stopPropagation(); // Mencegah klik tembus ke elemen belakangnya
+            const keypad = document.getElementById('keypad-container');
+            const hint = document.getElementById('hint-text');
+
+            if (isKeypadVisible) {
+                keypad.classList.add('keypad-hidden'); // Turunkan keypad
+                hint.classList.remove('opacity-0');    // Tampilkan teks bantuan
+                hint.classList.add('opacity-100');
+            } else {
+                keypad.classList.remove('keypad-hidden'); // Naikkan keypad
+                hint.classList.add('opacity-0');
+                hint.classList.remove('opacity-100');
+            }
+            isKeypadVisible = !isKeypadVisible;
+        }
+
+        function showKeypad() {
+            if (!isKeypadVisible) {
+                const keypad = document.getElementById('keypad-container');
+                const hint = document.getElementById('hint-text');
+                keypad.classList.remove('keypad-hidden');
+                hint.classList.add('opacity-0');
+                hint.classList.remove('opacity-100');
+                isKeypadVisible = true;
+            }
+        }
+
+        // ==========================================
+        // FUNGSI INPUT PIN
+        // ==========================================
+        function updateDots() {
+            for (let i = 1; i <= MAX_PIN_LENGTH; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i <= currentPin.length) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            }
+        }
+
+        function addNumber(num) {
+            showKeypad(); 
+            if (currentPin.length < MAX_PIN_LENGTH) {
+                currentPin += num;
+                updateDots();
+
+                if (currentPin.length === MAX_PIN_LENGTH) {
+                    setTimeout(() => {
+                        simpanPinKeMemori(); // Memanggil API Database
+                    }, 300);
+                }
+            }
+        }
+
+        async function simpanPinKeMemori() {
+            let user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.id) {
+                alert("Gagal: Anda belum Login!");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // Mengirim ID User dan PIN baru ke Database MySQL
+                const response = await fetch('http://localhost:3000/api/auth/set-pin', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: user.id, pin: currentPin })
+                });
+
+                if (response.ok) {
+                    // Update juga di localStorage sbg cadangan sementara
+                    user.pin = currentPin;
+                    localStorage.setItem('user', JSON.stringify(user));
+                    
+                    showSuccessModal(); 
+                } else {
+                    alert("Gagal menyimpan PIN ke server.");
+                    currentPin = ""; updateDots();
+                }
+            } catch (err) {
+                alert("Koneksi ke server gagal. Pastikan backend menyala.");
+                currentPin = ""; updateDots();
+            }
+        }
+        function removeNumber() {
+            showKeypad();
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updateDots();
+            }
+        }
+
+        function showSuccessModal() {
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('successModalContent');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function finishSetup() {
+            window.location.href = 'profil.html';
+        }
+
+        // ==========================================
+        // DUKUNGAN KEYBOARD FISIK (PC/LAPTOP)
+        // ==========================================
+        document.addEventListener('keydown', function(event) {
+            const modal = document.getElementById('successModal');
+            if (!modal.classList.contains('hidden')) return;
+
+            if (event.key >= '0' && event.key <= '9') {
+                addNumber(event.key);
+                triggerVisualKeystroke(event.key);
+            } 
+            else if (event.key === 'Backspace') {
+                removeNumber();
+                triggerVisualKeystroke('backspace');
+            }
+        });
+
+        function triggerVisualKeystroke(key) {
+            const btn = document.querySelector(`button[data-key="${key}"]`);
+            if (btn) {
+                btn.classList.add('keyboard-active');
+                setTimeout(() => {
+                    btn.classList.remove('keyboard-active');
+                }, 100);
+            }
+        }
+    </script>
+</body>
+</html>

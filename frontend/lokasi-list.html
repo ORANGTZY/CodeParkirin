@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Lokasi List</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- LEAFLET JS UNTUK KALKULASI JARAK/GEOLOCATION (Tidak menampilkan petanya, hanya butuh logikanya) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        body {
+            background-color: #F1F1F1;
+            font-family: 'Montserrat', sans-serif;
+            overscroll-behavior-y: none;
+            margin: 0;
+        }
+
+        .slide-in-right {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <!-- BAGIAN 1: HEADER -->
+        <div class="bg-[#F5F5F5] w-full pt-10 pb-4 px-4 z-40 flex items-center justify-between">
+            
+            <div class="flex items-center gap-3">
+                <a href="user-dashboard.html" class="text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                
+                <div class="flex flex-col max-w-[200px]">
+                    <span class="text-[#AAAAAA] font-bold text-[10px] leading-tight">Lokasi Kamu</span>
+                    <span id="user-address" class="text-black font-semibold text-[14px] leading-snug truncate">Mencari lokasi...</span>
+                </div>
+            </div>
+
+            <button class="hover:opacity-70 active:scale-90 transition-transform p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </button>
+
+        </div>
+
+        <!-- BAGIAN 2: AREA LIST (Daftar Lokasi Parkir) -->
+        <div class="flex-grow bg-[#F1F1F1] overflow-y-auto hide-scrollbar pt-2 z-10">
+            
+            <!-- LIST ITEM 1: RITA Supermall -->
+            <a href="booking.html" class="w-full h-[45px] bg-[#F5F5F5] border-b border-gray-200 flex items-center justify-between px-4 cursor-pointer hover:bg-white transition-colors active:bg-gray-100 block">
+                
+                <!-- Info Kiri (Nama & Jarak) -->
+                <div class="flex flex-col justify-center w-[120px]">
+                    <span class="text-[#0F172A] font-semibold text-[12px] leading-tight truncate">RITA Supermall</span>
+                    <div class="flex items-baseline mt-[2px]">
+                        <!-- ID park-distance agar JavaScript bisa mengubah angkanya -->
+                        <span id="park-distance" class="text-[#0F172A] font-semibold text-[11px] leading-none">...</span>
+                        <span class="text-[#0F172A] font-semibold text-[5px] ml-[1px]">Km</span>
+                    </div>
+                </div>
+
+                <!-- Info Tengah (Harga) -->
+                <div class="flex items-baseline flex-grow justify-center mt-3 mr-4">
+                    <span class="text-black font-semibold text-[7px] mr-1">IDR</span>
+                    <span class="text-black font-semibold text-[11px] leading-none">2.000</span>
+                </div>
+
+                <!-- Info Kanan (Kapasitas & Panah) -->
+                <div class="flex items-center gap-3">
+                    <div class="flex flex-col items-center justify-center">
+                        <span id="list-slots" class="text-[#00D1FF] font-bold text-[20px] leading-[18px]">...</span>
+                        <span class="text-[#00D7FF] font-semibold text-[12px] leading-tight">Tersedia</span>
+                    </div>
+                    <!-- Panah Kanan -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#0F172A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Kamu bisa menambahkan copy-paste LIST ITEM 1 di atas jika ada lokasi parkir lainnya (misal: Alun-alun, dsb) -->
+
+        </div>
+
+        <!-- BAGIAN 3: BOTTOM BAR (Kembali ke Map View) -->
+        <a href="lokasi.html" class="h-[60px] w-full bg-[#0141A3] flex items-center justify-center gap-3 cursor-pointer hover:bg-blue-800 transition-colors z-40 active:scale-[0.98] relative">
+            <!-- Ikon Map Kustom (Dibuat dengan CSS/SVG outline sesuai desain) -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+            <span class="text-white font-semibold text-[13px] uppercase tracking-wide">Lihat Dalam Map</span>
+        </a>
+
+    </div>
+
+    <!-- SCRIPT GEOLOCATION & KALKULASI JARAK -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Koordinat Tujuan (Lokasi Parkir RITA Supermall)
+            const ritaLat = -7.4255;
+            const ritaLng = 109.2303;
+
+            const addressTextElement = document.getElementById('user-address');
+            const distanceTextElement = document.getElementById('park-distance');
+
+            // Cek apakah browser mendukung fitur GPS/Lokasi
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+
+                        // 1. MENGHITUNG JARAK ANTARA USER DAN TEMPAT PARKIR
+                        const userLatLng = L.latLng(userLat, userLng);
+                        const destLatLng = L.latLng(ritaLat, ritaLng);
+                        
+                        // Konversi meter ke Kilometer (2 angka di belakang koma)
+                        const distanceInKm = (userLatLng.distanceTo(destLatLng) / 1000).toFixed(2);
+                        distanceTextElement.textContent = distanceInKm;
+
+                        // 2. TARIK NAMA ALAMAT (REVERSE GEOCODING)
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}&zoom=18&addressdetails=1`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if(data && data.address) {
+                                    const addr = data.address;
+                                    const exactLocation = addr.amenity || addr.building || addr.shop || addr.leisure || addr.office || addr.tourism || addr.road || addr.neighbourhood || addr.suburb || addr.village || addr.city_district;
+                                    
+                                    if (exactLocation) {
+                                        addressTextElement.textContent = exactLocation;
+                                    } else {
+                                        const shortName = data.display_name ? data.display_name.split(',')[0] : "Area Tidak Dikenal";
+                                        addressTextElement.textContent = shortName;
+                                    }
+                                } else {
+                                    addressTextElement.textContent = "Area Tidak Dikenal";
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Gagal menarik nama jalan/bangunan:", err);
+                                addressTextElement.textContent = "Sinyal GPS Lemah";
+                            });
+                    },
+                    function(error) {
+                        console.warn("Error Geolocation:", error.message);
+                        addressTextElement.textContent = "Akses Lokasi Ditolak";
+                        distanceTextElement.textContent = "-"; 
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                addressTextElement.textContent = "Perangkat Tidak Mendukung";
+                distanceTextElement.textContent = "-";
+            }
+
+            fetch('http://localhost:3000/api/parkir/availability/1')
+                .then(res => res.json())
+                .then(result => {
+                    if(result.status === 'success') {
+                        document.getElementById('list-slots').textContent = result.data.available_slots;
+                    }
+                }).catch(err => console.error(err));
+                
+        });
+    </script>
+</body>
+</html>

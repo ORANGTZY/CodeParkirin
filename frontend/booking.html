@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#B9C7DF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Pemesanan</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        body {
+            background-color: #F1F1F1;
+            font-family: 'Montserrat', sans-serif;
+            overscroll-behavior-y: none;
+            margin: 0;
+        }
+
+        .slide-in-right {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="absolute top-0 left-0 w-full h-[204px] bg-[#B9C7DF] z-0"></div>
+
+        <div class="w-full pt-12 pb-4 px-4 z-10 flex items-center">
+            <a href="javascript:history.back()" class="text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h1 class="text-[20px] font-bold text-[#0064F0]">Pemesanan</h1>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar z-10 px-4 pt-6 pb-24">
+            
+            <div class="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-[15px] flex flex-col shadow-sm mb-8">
+                
+                <div class="flex justify-between items-start px-4 pt-4 pb-3">
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-3">
+                            <span class="text-[#0F172A] font-semibold text-[12px]">RITA Supermall</span>
+                            <div class="flex items-baseline">
+                                <span id="park-distance" class="text-[#0F172A] font-semibold text-[11px] leading-none">...</span>
+                                <span class="text-[#0F172A] font-semibold text-[5px] ml-[1px]">Km</span>
+                            </div>
+                        </div>
+                        <span class="text-[#D9D9D9] font-semibold text-[10px] mt-1">Kab. Banyumas</span>
+                    </div>
+
+                    <div class="flex items-baseline">
+                        <span class="text-black font-semibold text-[7px] mr-1">IDR</span>
+                        <span class="text-black font-semibold text-[11px] leading-none">2.000</span>
+                    </div>
+                </div>
+
+                <div class="w-full h-0 border-t border-[#D9D9D9]"></div>
+
+                <div class="flex items-center justify-between h-[30px] px-2 relative">
+                    <div class="w-1/3 flex justify-center border-r border-[#D9D9D9] py-1">
+                        <span class="text-[#D9D9D9] font-semibold text-[10px]">Parking</span>
+                    </div>
+
+                    <div class="w-1/3 flex justify-center border-r border-[#D9D9D9] py-1 gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-[#D9D9D9]" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-[#D9D9D9]" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-[#D9D9D9]" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-[#D9D9D9]" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-[#D9D9D9]" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    </div>
+
+                    <div class="w-1/3 flex justify-center items-center py-1 gap-1.5">
+                        <span class="text-[#00D7FF] font-semibold text-[10px]">Tersedia</span>
+                        <div class="bg-[#00D5FF] px-1.5 py-[1px] rounded-[10px]">
+                            <span id="booking-slots" class="text-[#F5F5F5] font-semibold text-[10px] leading-none">.../200</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col mb-4">
+                <h2 class="text-black font-semibold text-[14px] mb-4">Harga</h2>
+                
+                <div class="mb-4">
+                    <h3 class="text-black font-semibold text-[14px] mb-2">Tarif Motor</h3>
+                    <p class="text-black font-semibold text-[10px] mb-1">Jam Pertama IDR <span id="tarif-motor-pertama">...</span></p>
+                    <p class="text-black font-semibold text-[10px]">Jam Berikutnya IDR <span id="tarif-motor-berikutnya">...</span>/jam</p>
+                </div>
+
+                <div>
+                    <h3 class="text-black font-semibold text-[14px] mb-2">Tarif Mobil</h3>
+                    <p class="text-black font-semibold text-[10px] mb-1">Jam Pertama IDR <span id="tarif-mobil-pertama">...</span></p>
+                    <p class="text-black font-semibold text-[10px]">Jam Berikutnya IDR <span id="tarif-mobil-berikutnya">...</span>/jam</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 w-full h-[81px] bg-[#F5F5F5] flex flex-col justify-center px-4 z-20 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] border-t border-gray-200">
+            <div class="text-center mb-1 -mt-2">
+                <span class="text-black font-semibold text-[7px]">Bermasalah? <a href="#" class="text-[#0064F0]">Hubungi Kami</a></span>
+            </div>
+            <a href="booking-pilih-kendaraan.html" class="w-full h-[36px] bg-[#0141A3] hover:bg-blue-900 rounded-[10px] flex items-center justify-center transition-all active:scale-95 shadow-sm block text-center">
+                <span class="text-white font-semibold text-[12px] leading-[36px]">Lanjutkan</span>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Logika Kalkulasi Jarak Geolocation
+            const ritaLat = -7.4255;
+            const ritaLng = 109.2303;
+            const distanceTextElement = document.getElementById('park-distance');
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+
+                        const userLatLng = L.latLng(userLat, userLng);
+                        const destLatLng = L.latLng(ritaLat, ritaLng);
+                        
+                        const distanceInKm = (userLatLng.distanceTo(destLatLng) / 1000).toFixed(2);
+                        distanceTextElement.textContent = distanceInKm;
+                    },
+                    function(error) {
+                        distanceTextElement.textContent = "-"; 
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                distanceTextElement.textContent = "-";
+            }
+
+            // 2. Memanggil Fungsi Fetch Tarif dari Database
+            fetchTarif();
+
+            fetch('http://localhost:3000/api/parkir/availability/1')
+                .then(res => res.json())
+                .then(result => {
+                    if(result.status === 'success') {
+                        document.getElementById('booking-slots').textContent = `${result.data.available_slots}/${result.data.total_slots}`;
+                    }
+                }).catch(err => console.error(err));
+        });
+
+        // FUNGSI MENGAMBIL TARIF DARI API DATABASE (BACKEND)
+        async function fetchTarif() {
+            try {
+                // Endpoint ini harus dibuat di file Backend Node.js/PHP Anda
+                // Contoh: SELECT * FROM tarif
+                const response = await fetch('http://localhost:3000/api/tarif');
+                const result = await response.json();
+                
+                if(result.data && result.data.length > 0) {
+                    result.data.forEach(item => {
+                        // Memasukkan angka tarif ke dalam elemen HTML sesuai jenis kendaraan
+                        if (item.jenis_kendaraan.toLowerCase() === 'motor') {
+                            document.getElementById('tarif-motor-pertama').textContent = item.tarif_jam_pertama.toLocaleString('id-ID');
+                            document.getElementById('tarif-motor-berikutnya').textContent = item.tarif_jam_berikutnya.toLocaleString('id-ID');
+                        } else if (item.jenis_kendaraan.toLowerCase() === 'mobil') {
+                            document.getElementById('tarif-mobil-pertama').textContent = item.tarif_jam_pertama.toLocaleString('id-ID');
+                            document.getElementById('tarif-mobil-berikutnya').textContent = item.tarif_jam_berikutnya.toLocaleString('id-ID');
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Gagal mengambil data tarif dari server:', error);
+                
+                // Fallback (Nilai Cadangan) jika server database mati
+                document.getElementById('tarif-motor-pertama').textContent = "3.000";
+                document.getElementById('tarif-motor-berikutnya').textContent = "1.000";
+                document.getElementById('tarif-mobil-pertama').textContent = "10.000";
+                document.getElementById('tarif-mobil-berikutnya').textContent = "2.000";
+            }
+        }
+    </script>
+</body>
+</html>

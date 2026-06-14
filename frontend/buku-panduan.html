@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+
+    <title>Parkirin - Buku Panduan</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; user-select: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .fade-in { animation: fadeIn 0.2s ease-in-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Garis vertikal penghubung langkah-langkah */
+        .step-line::before {
+            content: '';
+            position: absolute;
+            top: 40px; left: 35px; bottom: -20px;
+            width: 1px;
+            background-color: #D9D9D9;
+            z-index: -1;
+        }
+        .step-line:last-child::before { display: none; }
+
+        .nav-curve { position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 86px; height: 38px; background-color: #F1F1F1; border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; border: 1px solid #D9D9D9; border-top: none; z-index: 10; }
+        .nav-curve::before, .nav-curve::after { content: ""; position: absolute; top: 0; width: 14px; height: 14px; background-color: transparent; }
+        .nav-curve::before { left: -14px; border-top-right-radius: 14px; border-right: 1px solid #D9D9D9; border-top: 1px solid #D9D9D9; box-shadow: 4px -4px 0 4px #F1F1F1; }
+        .nav-curve::after { right: -14px; border-top-left-radius: 14px; border-left: 1px solid #D9D9D9; border-top: 1px solid #D9D9D9; box-shadow: -4px -4px 0 4px #F1F1F1; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="w-full h-[100px] bg-[#F6F6F6] pt-12 px-4 flex items-center z-20 shrink-0 border-b border-gray-200">
+            <button onclick="navigasiKembali()" class="flex items-center text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <span id="header-title" class="ml-2 font-bold text-[20px] text-[#0064F0]">Buku Panduan</span>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar z-10 flex flex-col bg-[#F6F6F6] relative">
+            
+            <div id="view-main" class="w-full flex flex-col pb-32">
+                <div class="px-5 pt-4 pb-2">
+                    <div class="w-full bg-[#EAF5FF] rounded-[15px] p-5 relative overflow-hidden flex items-center justify-between min-h-[120px]">
+                        <div class="z-10 w-3/5">
+                            <h2 class="text-[16px] font-bold text-black leading-tight">Aktivitas Parkir Anda</h2>
+                            <p class="text-[11px] font-medium text-gray-500 mt-2 leading-snug">Lihat detail aktivitas parkir dengan mudah</p>
+                        </div>
+                        <div class="absolute right-0 bottom-0 h-full w-2/5 flex justify-end">
+                            <img src="assets/img/image38.png" alt="Panduan" class="h-full object-cover object-left mix-blend-darken">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-5 mt-4">
+                    <h3 class="text-[15px] font-bold text-black mb-3">Kategori Panduan</h3>
+                    <div class="flex flex-col gap-3">
+                        
+                        <div onclick="bukaHalaman('sebelum', 'Detail Panduan')" class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between cursor-pointer hover:bg-blue-50 active:scale-95 transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg flex items-center justify-center text-[#0064F0]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-[14px] font-bold text-black">Sebelum Parkir</h4>
+                                    <p class="text-[10px] font-semibold text-gray-400 mt-0.5">Persiapan sebelum menggunakan layanan parkir</p>
+                                </div>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        </div>
+
+                        <div onclick="bukaHalaman('saat-parkir', 'Saat Parkir')" class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between cursor-pointer hover:bg-blue-50 active:scale-95 transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg flex items-center justify-center text-green-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-[14px] font-bold text-black">Saat Parkir</h4>
+                                    <p class="text-[10px] font-semibold text-gray-400 mt-0.5">Panduan selama proses parkir berlangsung</p>
+                                </div>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        </div>
+
+                        <div onclick="bukaHalaman('saat-pembayaran', 'Saat Pembayaran')" class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between cursor-pointer hover:bg-blue-50 active:scale-95 transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg flex items-center justify-center text-yellow-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-[14px] font-bold text-black">Saat Pembayaran</h4>
+                                    <p class="text-[10px] font-semibold text-gray-400 mt-0.5">Cara melakukan pembayaran parkir dengan mudah</p>
+                                </div>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-sebelum" class="w-full flex-col pb-32 hidden">
+                <div class="px-5 pt-4 pb-2">
+                    <span class="bg-[#EAF5FF] text-[#0064F0] font-semibold text-[10px] px-3 py-1 rounded-[20px]">Sebelum Parkir</span>
+                    <div class="flex justify-between items-center mt-3 h-[110px] relative">
+                        <div class="w-3/5 relative z-10">
+                            <h2 class="text-[18px] font-bold text-black leading-tight">Cara Menggunakan Aplikasi Parkirin</h2>
+                            <p class="text-[11px] font-medium text-gray-500 mt-2 leading-snug">Ikuti langkah-langkah mudah berikut untuk menggunakan aplikasi Parkirin dengan nyaman dan aman.</p>
+                        </div>
+                        <div class="w-2/5 h-full absolute right-[-10px] bottom-0 flex justify-end">
+                            <img src="assets/img/image38.png" alt="Sebelum Parkir" class="h-full object-contain mix-blend-darken scale-110 origin-bottom-right">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-5 mt-4 relative z-0 flex flex-col gap-4">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Unduh Aplikasi</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Unduh aplikasi Parkirin melalui Google Play Store atau App Store.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Daftar / Masuk</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Buat akun baru atau masuk menggunakan akun yang sudah ada.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0] font-bold">P</div>
+                        <div><h4 class="text-[14px] font-bold text-black">Temukan Lokasi Parkir</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Cari dan pilih lokasi parkir yang tersedia di sekitar Anda.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H11a1 1 0 001-1v-1h5v1a1 1 0 001 1h.05a2.5 2.5 0 014.9 0H18a1 1 0 001-1V9l-2-3h-3l-2-2H3zm2 3h4l1.5 2H5V7zm8 2l1.5-2H16l1.5 2H13z" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Parkir Kendaraan</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Masuk ke area parkir dan ikuti petunjuk yang tersedia.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" /><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Lakukan Pembayaran</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Bayar parkir secara digital dengan aman dan praktis.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Selesai</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Parkir selesai, Anda dapat keluar dari area parkir.</p></div>
+                    </div>
+                </div>
+
+                <div class="px-5 mt-6 pb-6">
+                    <div class="w-full bg-[#ECF2FE] rounded-xl p-4 flex gap-3 border border-blue-100">
+                        <div class="shrink-0 pt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0064F0]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-[13px] font-bold text-black">Tips Keamanan</h4>
+                            <p class="text-[10px] font-semibold text-gray-500 mt-1 leading-snug">Pastikan Anda berada di lokasi parkir resmi dan jangan bagikan kode parkir kepada orang lain.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-saat-parkir" class="w-full flex-col pb-32 hidden">
+                <div class="px-5 pt-4 pb-2">
+                    <span class="bg-[#EAF5FF] text-[#0064F0] font-semibold text-[10px] px-3 py-1 rounded-[20px]">Saat Parkir</span>
+                    <div class="flex justify-between items-center mt-3 h-[100px] relative">
+                        <div class="w-3/5 relative z-10">
+                            <h2 class="text-[20px] font-bold text-black leading-tight">Saat Parkir</h2>
+                            <p class="text-[11px] font-medium text-gray-500 mt-2 leading-snug">Ikuti langkah-langkah berikut untuk panduan selama proses parkir berlangsung.</p>
+                        </div>
+                        <div class="w-2/5 h-full absolute right-[-10px] bottom-0 flex justify-end">
+                            <img src="assets/img/image39.png" alt="Saat Parkir" class="h-full object-contain scale-110 origin-right">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-5 mt-4 relative z-0 flex flex-col gap-4">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Masuk ke Area Parkir</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Arahkan kendaraan Anda ke pintu atau gate masuk area parkir.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Ambil Tiket atau Pindai QR</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Tekan tombol tiket pada gate atau pindai kode QR yang ada pada aplikasi Parkirin untuk masuk.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Menuju Titik Parkir</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Cari titik parkir yang sudah di booking pada lokasi parkir.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Pastikan Kendaraan Terkunci</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Kunci pintu kendaraan Anda dan amankan barang berharga.</p></div>
+                    </div>
+                </div>
+
+                <div class="px-5 mt-6 pb-6">
+                    <div class="w-full bg-[#ECF2FE] rounded-xl p-4 flex gap-3 border border-blue-100">
+                        <div class="shrink-0 pt-0.5">
+                            <div class="w-6 h-6 bg-[#0064F0] rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+                        </div>
+                        <div>
+                            <h4 class="text-[13px] font-bold text-black">Tips Saat Parkir</h4>
+                            <p class="text-[10px] font-semibold text-gray-500 mt-1 leading-snug">Selalu ingat lokasi parkir Anda atau cek titik parkir pada aplikasi Parkirin. Pastikan tidak ada barang berharga yang tertinggal di kendaraan Anda.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-saat-pembayaran" class="w-full flex-col pb-32 hidden">
+                <div class="px-5 pt-4 pb-2">
+                    <span class="bg-[#EAF5FF] text-[#0064F0] font-semibold text-[10px] px-3 py-1 rounded-[20px]">Saat Pembayaran</span>
+                    <div class="flex justify-between items-center mt-3 h-[100px] relative">
+                        <div class="w-3/5 relative z-10">
+                            <h2 class="text-[20px] font-bold text-black leading-tight">Saat Pembayaran</h2>
+                            <p class="text-[11px] font-medium text-gray-500 mt-2 leading-snug">Ikuti langkah-langkah berikut untuk panduan selama proses pembayaran berlangsung.</p>
+                        </div>
+                        <div class="w-2/5 h-full absolute right-[-20px] bottom-0 flex justify-end">
+                            <img src="assets/img/image40.png" alt="Saat Pembayaran" class="h-full object-contain scale-125 origin-right">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-5 mt-4 relative z-0 flex flex-col gap-4">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" /><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Pilih Metode Pembayaran</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Pilih e-wallet, kartu kredit, atau VA (Virtual Account) untuk pembayaran.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Periksa Detail Tagihan</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Periksa durasi parkir dan total biaya parkir.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Otorisasi Pembayaran</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Masukkan PIN atau konfirmasi keamanan.</p></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3 relative step-line z-10">
+                        <div class="w-10 h-10 bg-[#EAF5F9] rounded-lg shrink-0 flex items-center justify-center text-[#0064F0]"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div>
+                        <div><h4 class="text-[14px] font-bold text-black">Terima Kuitansi Digital</h4><p class="text-[10px] font-semibold text-gray-400 mt-0.5">Simpan bukti pembayaran atau kuitansi Anda.</p></div>
+                    </div>
+                </div>
+
+                <div class="px-5 mt-6 pb-6">
+                    <div class="w-full bg-[#ECF2FE] rounded-xl p-4 flex gap-3 border border-blue-100">
+                        <div class="shrink-0 pt-0.5">
+                            <div class="w-6 h-6 bg-[#0064F0] rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+                        </div>
+                        <div>
+                            <h4 class="text-[13px] font-bold text-black">Tips Pembayaran</h4>
+                            <p class="text-[10px] font-semibold text-gray-500 mt-1 leading-snug">Selalu gunakan e-wallet atau kartu yang terdaftar untuk transaksi cepat. Jangan bagikan PIN atau kode OTP Anda kepada orang lain.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full flex justify-center py-6 border-t border-gray-200 mt-4 mb-20 bg-[#F6F6F6]">
+                <a href="layanan-pelanggan.html" class="flex items-center gap-2 hover:opacity-80 transition-all cursor-pointer">
+                    <img src="assets/img/elemencs.png" alt="CS" class="w-6 h-6 object-contain">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-medium text-gray-500">Butuh Bantuan Terkait Hal Lain?</span>
+                        <span class="text-[11px] font-semibold text-[#0064F0]">Hubungi Layanan Pelanggan</span>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 w-full max-w-[402px] h-[75px] bg-[#F5F5F5] border-t border-[#D9D9D9] rounded-t-[19px] z-20 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+            <div class="relative w-full h-full px-8 flex items-center justify-center">
+                
+                <div class="nav-curve"></div>
+
+                <div class="flex w-full justify-between items-end pb-3 z-30">
+                    <a href="user-dashboard.html" class="flex flex-col items-center justify-end cursor-pointer relative z-30 w-[60px] hover:opacity-80 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-[28px] w-[28px] text-[#D9D9D9] mb-[5px]" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
+                        </svg>
+                        <span class="text-[#D9D9D9] font-semibold text-[12px] leading-none">Utama</span>
+                    </a>
+
+                    <div class="flex flex-col items-center justify-end relative z-30 w-[60px]">
+                        <div class="h-[28px] mb-[5px]"></div>
+                        <span class="text-[#D9D9D9] font-semibold text-[12px] leading-none">Tiket</span>
+                    </div>
+
+                    <a href="profil.html" class="flex flex-col items-center justify-end cursor-pointer relative z-30 w-[60px] hover:opacity-80 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-[28px] w-[28px] text-[#00D1FF] mb-[5px]" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span class="text-[#00D1FF] font-semibold text-[12px] leading-none">Pengguna</span>
+                    </a>
+                </div>
+
+                <a href="tiket.html" class="flex flex-col items-center cursor-pointer absolute top-[-26px] left-1/2 -translate-x-1/2 z-40 transition-transform active:scale-95">
+                    <div class="bg-[#0141A3] w-[61px] h-[61px] rounded-full flex flex-col items-center justify-center shadow-[0_5px_10px_rgba(1,65,163,0.3)]">
+                        <div class="w-[32px] h-[29px] flex flex-col justify-between overflow-hidden rounded-[3px]">
+                            <div class="w-full h-[13px] bg-[#F5F5F5]"></div>
+                            <div class="w-full h-[3px] bg-transparent"></div>
+                            <div class="w-full h-[13px] bg-[#F5F5F5]"></div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        let currentView = 'main';
+
+        function bukaHalaman(targetView, titleText) {
+            document.getElementById('view-main').classList.add('hidden');
+            document.getElementById('view-main').classList.remove('flex');
+            
+            document.getElementById('view-sebelum').classList.add('hidden');
+            document.getElementById('view-sebelum').classList.remove('flex');
+            
+            document.getElementById('view-saat-parkir').classList.add('hidden');
+            document.getElementById('view-saat-parkir').classList.remove('flex');
+            
+            document.getElementById('view-saat-pembayaran').classList.add('hidden');
+            document.getElementById('view-saat-pembayaran').classList.remove('flex');
+
+            const targetElement = document.getElementById('view-' + targetView);
+            targetElement.classList.remove('hidden');
+            targetElement.classList.add('flex', 'fade-in');
+            
+            document.getElementById('header-title').textContent = titleText;
+            
+            document.querySelector('.overflow-y-auto').scrollTo({ top: 0, behavior: 'smooth' });
+
+            currentView = targetView;
+        }
+
+        function navigasiKembali() {
+            if (currentView === 'main') {
+                window.location.href = 'profil.html';
+            } else {
+                bukaHalaman('main', 'Buku Panduan');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Edit Profil</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .slide-in { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .material-input {
+            width: 100%;
+            height: 40px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid #515151;
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000;
+            transition: border-color 0.2s;
+        }
+        .material-input:focus {
+            outline: none;
+            border-bottom: 2px solid #0064F0;
+        }
+        .material-input::placeholder {
+            color: #6B7280;
+            opacity: 0.5;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200">
+
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/id_ID/sdk.js"></script>
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in">
+        
+        <div class="w-full h-[120px] bg-[#F5F5F5] pt-12 px-4 flex items-center shadow-sm z-20 shrink-0">
+            <a href="profil.html" class="text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h1 class="text-[20px] font-bold text-[#0064F0]">Edit Profil</h1>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar z-10 flex flex-col pb-24 relative">
+            
+            <div class="absolute top-0 w-full h-[380px] bg-[#F5F5F5] z-0"></div>
+
+            <div class="w-full flex justify-center mt-6 mb-4 z-10 relative">
+                <div class="relative w-[100px] h-[100px]">
+                    <div class="w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md bg-gray-300">
+                        <img id="profile-pic-preview" src="https://i.pravatar.cc/150?img=11" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                    <label for="profile-upload" class="absolute bottom-0 right-0 w-8 h-8 bg-[#0064F0] rounded-full border-2 border-white flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-colors shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </label>
+                    <input type="file" id="profile-upload" class="hidden" accept="image/*" onchange="previewProfilePic(event)">
+                </div>
+            </div>
+
+            <div class="w-full px-6 pt-2 flex flex-col gap-5 z-10">
+                <div class="relative flex flex-col bg-[#EDEDED] pt-2 rounded-t-md">
+                    <label class="text-[10px] font-bold text-[#A4A4A4] ml-4">Nama Lengkap</label>
+                    <input type="text" id="edit-nama" class="material-input" placeholder="Masukkan nama Anda">
+                </div>
+
+                <div class="relative flex flex-col bg-[#EDEDED] pt-2 rounded-t-md">
+                    <label class="text-[10px] font-bold text-[#A4A4A4] ml-4">Nomor Telepon Aktif</label>
+                    <input type="tel" id="edit-telepon" class="material-input" placeholder="Contoh: 08123456789">
+                </div>
+
+                <div class="relative flex flex-col bg-[#EDEDED] pt-2 rounded-t-md">
+                    <label class="text-[10px] font-bold text-[#A4A4A4] ml-4">Alamat Email</label>
+                    <input type="email" id="edit-email" class="material-input" placeholder="contoh@email.com">
+                </div>
+            </div>
+
+            <div class="w-full h-8 bg-[#F1F1F1] z-10 mt-6"></div>
+
+            <div class="w-full flex flex-col z-10 bg-[#F1F1F1]">
+                
+                <div onclick="toggleSocialLink('facebook')" class="w-full h-[55px] bg-[#F5F5F5] border-b border-[#D9D9D9] flex items-center justify-between px-6 cursor-pointer hover:bg-gray-100 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="w-[29px] h-[29px] bg-[#1877F2] rounded-full flex items-center justify-center text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                        </div>
+                        <span id="facebook-text" class="font-medium text-[11px] text-black">Facebook</span>
+                    </div>
+                    <span id="facebook-status" class="font-bold text-[14px] text-[#0062E6]">LINK</span>
+                </div>
+
+                <div onclick="toggleSocialLink('google')" class="w-full h-[55px] bg-[#F5F5F5] border-b border-[#D9D9D9] flex items-center justify-between px-6 cursor-pointer hover:bg-gray-100 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="w-[29px] h-[29px] bg-white rounded-full flex items-center justify-center shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18px" height="18px"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
+                        </div>
+                        <span id="google-text" class="font-medium text-[11px] text-black">Google</span>
+                    </div>
+                    <span id="google-status" class="font-bold text-[14px] text-[#0062E6]">LINK</span>
+                </div>
+
+                <div onclick="konfirmasiHapusAkun()" class="w-full h-[55px] bg-[#F5F5F5] flex items-center justify-between px-6 cursor-pointer hover:bg-red-50 transition-colors mt-[26px]">
+                    <div class="flex items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#E53935]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        <span class="font-bold text-[11px] text-[#E53935]">Hapus Akun</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#E53935]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 w-full h-[89px] bg-[#F5F5F5] flex flex-col justify-center px-8 z-20 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+            <button onclick="simpanProfil()" class="w-full h-[47px] bg-[#89E7F9] hover:bg-cyan-400 rounded-[10px] flex items-center justify-center transition-all active:scale-95 shadow-sm">
+                <span class="text-white font-semibold text-[12px] tracking-wide">SIMPAN</span>
+            </button>
+        </div>
+
+        <div id="saveModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="saveModalContent" class="bg-white w-[280px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <h3 class="text-[18px] font-bold text-black mb-2 text-center">Berhasil!</h3>
+                <p class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">Perubahan profil Anda telah berhasil disimpan.</p>
+                <button onclick="window.location.href='profil.html'" class="w-full bg-[#0064F0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">
+                    Kembali ke Profil
+                </button>
+            </div>
+        </div>
+
+        <div id="successModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="successModalContent" class="bg-white w-[280px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <h3 class="text-[18px] font-bold text-black mb-2 text-center">Berhasil!</h3>
+                <p id="successMessage" class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">Berhasil menautkan akun.</p>
+                <button onclick="tutupModalSukses()" class="w-full bg-[#0064F0] hover:bg-blue-700 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+
+        <div id="warningModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="warningModalContent" class="bg-white w-[280px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div class="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-[18px] font-bold text-black mb-2 text-center">Peringatan!</h3>
+                <p id="warningMessage" class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">Semua kolom wajib diisi.</p>
+                <button onclick="tutupModalPeringatan()" class="w-full bg-[#F59E0B] hover:bg-yellow-600 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+
+        <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="deleteModalContent" class="bg-white w-[300px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#E53935]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                </div>
+                <h3 class="text-[18px] font-bold text-black mb-2 text-center">Hapus Permanen?</h3>
+                <p class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">Semua data Anda akan dihapus secara permanen dari server.</p>
+                <div class="flex w-full gap-3">
+                    <button onclick="tutupModalHapus()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-[12px] text-[12px] transition-colors active:scale-95">Batal</button>
+                    <button onclick="eksekusiHapusAkun()" class="flex-1 bg-[#E53935] hover:bg-red-700 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">Ya, Hapus!</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let googleClient;
+
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : 'GANTI_DENGAN_FACEBOOK_APP_ID_ANDA', 
+                cookie     : true,
+                xfbml      : true,
+                version    : 'v19.0'
+            });
+        };
+
+        // PERBAIKAN: Hanya menarik dan menampilkan data lokal
+        document.addEventListener("DOMContentLoaded", function() {
+            const userData = localStorage.getItem('user');
+            
+            if(userData) {
+                const user = JSON.parse(userData);
+                
+                if(user.nama) document.getElementById('edit-nama').value = user.nama;
+                document.getElementById('edit-telepon').value = user.no_telepon || user.telepon || "";
+                if(user.email) document.getElementById('edit-email').value = user.email;
+
+                const savedPic = localStorage.getItem('foto_profil_' + user.id);
+                    if(savedPic) {
+                        document.getElementById('profile-pic-preview').src = savedPic;
+                    }
+                const fbLinked = user.isFbLinked || false; 
+                const googleLinked = user.isGoogleLinked || false;
+                
+                renderSocialStatus('facebook', fbLinked, user.nama);
+                renderSocialStatus('google', googleLinked, user.nama);
+            }
+        });
+
+        // PERBAIKAN: Menunggu secara khusus untuk SDK Google selesai dimuat 100%
+        window.addEventListener('load', function() {
+            // INISIALISASI GOOGLE FETCH (UNTUK TARIK PROFIL)
+            if(window.google) {
+                googleClient = google.accounts.oauth2.initTokenClient({
+                    client_id: '1066988253902-54g8l817f47lb50ns948flbk2aakfk9m.apps.googleusercontent.com',
+                    scope: 'email profile openid',
+                    callback: async (response) => {
+                        if (response && response.access_token) {
+                            try {
+                                const resInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                    headers: { Authorization: `Bearer ${response.access_token}` }
+                                });
+                                const userInfo = await resInfo.json();
+
+                                // Update Foto Profil & LocalStorage
+                                let user = JSON.parse(localStorage.getItem('user')) || {};
+                                if(userInfo.picture) {
+                                    localStorage.setItem('foto_profil_' + user.id, userInfo.picture);
+                                    document.getElementById('profile-pic-preview').src = userInfo.picture;
+                                }
+                                
+                                linkAccount('google', userInfo.name);
+                            } catch (err) {
+                                tampilModalPeringatan('Gagal mengambil data profil dari server Google.');
+                            }
+                        }
+                    },
+                });
+            }
+        });
+
+        function previewProfilePic(event) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-pic-preview').src = e.target.result;
+                    let user = JSON.parse(localStorage.getItem('user')) || {};
+                    if (user.id) {
+                        localStorage.setItem('foto_profil_' + user.id, e.target.result);
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function renderSocialStatus(platform, isLinked, userName) {
+            const statusElement = document.getElementById(`${platform}-status`);
+            const textElement = document.getElementById(`${platform}-text`);
+            
+            if (isLinked) {
+                statusElement.textContent = "UNLINK";
+                statusElement.classList.replace("text-[#0062E6]", "text-red-500");
+                textElement.textContent = userName || "Pengguna"; 
+            } else {
+                statusElement.textContent = "LINK";
+                statusElement.classList.replace("text-red-500", "text-[#0062E6]");
+                textElement.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+            }
+        }
+
+        function toggleSocialLink(platform) {
+            let user = JSON.parse(localStorage.getItem('user')) || {};
+            const isLinked = platform === 'facebook' ? user.isFbLinked : user.isGoogleLinked;
+
+            if (isLinked) {
+                if(platform === 'facebook') user.isFbLinked = false;
+                if(platform === 'google') user.isGoogleLinked = false;
+                localStorage.setItem('user', JSON.stringify(user));
+                renderSocialStatus(platform, false, user.nama);
+            } else {
+                if (platform === 'facebook') {
+                    if(typeof FB === 'undefined') {
+                        tampilModalPeringatan("SDK Facebook sedang memuat. Coba lagi."); return;
+                    }
+                    FB.login(function(response) {
+                        if (response.authResponse) {
+                            // AMBIL PROFIL BESAR FACEBOOK
+                            FB.api('/me', {fields: 'name,picture.type(large)'}, function(res) {
+                                let user = JSON.parse(localStorage.getItem('user')) || {};
+                                if(res.picture && res.picture.data && res.picture.data.url) {
+                                    localStorage.setItem('foto_profil_' + user.id, res.picture.data.url);
+                                    document.getElementById('profile-pic-preview').src = res.picture.data.url;
+                                }
+                                linkAccount('facebook', res.name);
+                            });
+                        } else {
+                            console.log('Login Facebook dibatalkan pengguna.');
+                        }
+                    }, {scope: 'public_profile,email'});
+                    
+                } else if (platform === 'google') {
+                    if(googleClient) {
+                        googleClient.requestAccessToken();
+                    } else {
+                        tampilModalPeringatan("SDK Google gagal dimuat. Periksa koneksi internet.");
+                    }
+                }
+            }
+        }
+
+        function linkAccount(platform, accountName) {
+            let user = JSON.parse(localStorage.getItem('user')) || {};
+            if(platform === 'facebook') user.isFbLinked = true;
+            if(platform === 'google') user.isGoogleLinked = true;
+            localStorage.setItem('user', JSON.stringify(user));
+            
+            renderSocialStatus(platform, true, accountName);
+            
+            // PANGGIL POP UP SUKSES CUSTOM BUKAN ALERT
+            tampilModalSukses(`Berhasil menautkan akun ${platform.charAt(0).toUpperCase() + platform.slice(1)} Anda!`);
+        }
+
+        // ===============================================
+        // FUNGSI MODAL SUKSES (Tengah Layar)
+        // ===============================================
+        function tampilModalSukses(pesan) {
+            document.getElementById('successMessage').textContent = pesan;
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('successModalContent');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModalSukses() {
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('successModalContent');
+            
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // ===============================================
+        // FUNGSI MODAL PERINGATAN KUSTOM
+        // ===============================================
+        function tampilModalPeringatan(pesan) {
+            document.getElementById('warningMessage').textContent = pesan;
+            const modal = document.getElementById('warningModal');
+            const modalContent = document.getElementById('warningModalContent');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModalPeringatan() {
+            const modal = document.getElementById('warningModal');
+            const modalContent = document.getElementById('warningModalContent');
+            
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        async function simpanProfil() {
+            const newNama = document.getElementById('edit-nama').value.trim();
+            const newTelepon = document.getElementById('edit-telepon').value.trim();
+            const newEmail = document.getElementById('edit-email').value.trim();
+
+            if (!newNama || !newTelepon || !newEmail) {
+                tampilModalPeringatan("Nama Lengkap, Nomor Telepon, dan Alamat Email tidak boleh kosong. Silakan lengkapi data Anda sebelum menyimpan.");
+                return; 
+            }
+
+            let user = JSON.parse(localStorage.getItem('user')) || {};
+            
+            const updateData = {
+                id: user.id,
+                nama: newNama,
+                no_telepon: newTelepon,
+                email: newEmail
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/update-profile', {
+                    method: 'PUT', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    user.nama = newNama;
+                    user.no_telepon = newTelepon; 
+                    user.telepon = newTelepon;    
+                    user.email = newEmail;
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    const modal = document.getElementById('saveModal');
+                    const modalContent = document.getElementById('saveModalContent');
+                    
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modal.classList.add('opacity-100');
+                        modalContent.classList.remove('scale-90');
+                        modalContent.classList.add('scale-100');
+                    }, 10);
+
+                } else {
+                    tampilModalPeringatan("Gagal menyimpan profil: " + result.message);
+                }
+
+            } catch (error) {
+                tampilModalPeringatan("Kesalahan Jaringan. Pastikan server backend berjalan.");
+                console.error(error);
+            }
+        }
+
+        function konfirmasiHapusAkun() {
+            const modal = document.getElementById('deleteModal');
+            const modalContent = document.getElementById('deleteModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModalHapus() {
+            const modal = document.getElementById('deleteModal');
+            const modalContent = document.getElementById('deleteModalContent');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        async function eksekusiHapusAkun() {
+            let user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.id) {
+                tampilModalPeringatan("Gagal mengidentifikasi akun. Silakan login ulang."); return;
+            }
+            try {
+                const response = await fetch(`http://localhost:3000/api/delete-account/${user.id}`, {
+                    method: 'DELETE', headers: { 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    localStorage.removeItem('user');
+                    alert("Akun Anda telah berhasil dihapus secara permanen.");
+                    window.location.href = 'login.html';
+                } else {
+                    const result = await response.json();
+                    tampilModalPeringatan("Gagal menghapus akun: " + result.message);
+                    tutupModalHapus();
+                }
+            } catch (error) {
+                tampilModalPeringatan("Kesalahan Jaringan. Tidak dapat terhubung ke server.");
+                tutupModalHapus();
+            }
+        }
+    </script>
+</body>
+</html>

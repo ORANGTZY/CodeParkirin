@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+
+    <title>Parkirin - Pembayaran</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-HEmTJ9HSLVhgaQzY"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F5F5F5] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="w-full h-[100px] pt-12 px-4 flex items-center shrink-0">
+            <a href="javascript:history.back()" class="flex items-center text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <span class="ml-2 font-bold text-[20px] text-[#0064F0]">Tiket Anda</span>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar flex flex-col pt-4 pb-28 relative px-4">
+            
+            <h2 class="font-semibold text-[16px] text-black mb-3">Tempat Parkir</h2>
+            
+            <div class="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-[11px] p-4 relative mb-6">
+                <span id="display-date" class="font-semibold text-[10px] text-[#9E9898] block mb-2">Memuat...</span>
+                
+                <div class="flex justify-between items-start mt-1">
+                    <div class="flex flex-col gap-1">
+                        <span class="font-bold text-[14px] text-black">Rita Supermall</span>
+                        <span id="display-slot" class="font-normal text-[13px] text-black">Memuat...</span>
+                    </div>
+                    <div class="flex flex-col gap-1 text-right">
+                        <span id="display-vehicle-name" class="font-bold text-[14px] text-black">Memuat...</span>
+                        <span id="display-vehicle-plate" class="font-medium text-[14px] text-black">...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-[11px] p-4 relative flex flex-col shadow-sm">
+                
+                <h3 id="bill-title" class="font-bold text-[14px] text-black mb-4">Memuat...</h3>
+
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-normal text-[13px] text-black">Waktu Masuk</span>
+                    <span id="waktu-masuk" class="font-bold text-[13px] text-[#0064F0]">...</span>
+                </div>
+                
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-normal text-[13px] text-black">Waktu Sekarang</span>
+                    <span id="waktu-keluar" class="font-bold text-[13px] text-black">...</span>
+                </div>
+
+                <div class="w-full bg-[#E3E1ED] rounded-[6px] flex justify-between items-center px-4 py-2 mt-2 mb-4">
+                    <span class="font-bold text-[14px] text-black">Total Tagihan</span>
+                    <span id="total-tagihan" class="font-bold text-[14px] text-[#E53935]">Memuat...</span>
+                </div>
+
+                <div class="relative w-full mt-2 flex items-center justify-between">
+                    <div class="flex flex-col">
+                        <span class="font-normal text-[12px] text-black mb-1 flex items-center gap-1">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0064F0] opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-[#0064F0]"></span>
+                            </span>
+                            Durasi Parkir Berjalan
+                        </span>
+                        <span id="durasi-parkir" class="font-bold text-[18px] text-black leading-none whitespace-nowrap tracking-tight">Memuat...</span>
+                    </div>
+                    <div class="w-[50px] h-[50px] bg-[#E3E1ED] rounded-full flex items-center justify-center opacity-80 shrink-0 ml-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 w-full h-[100px] bg-[#F5F5F5] flex flex-col justify-center px-6 z-20 pb-4">
+            <button onclick="bayarSekarang()" class="w-full h-[60px] bg-[#0141A3] hover:bg-blue-800 rounded-[10px] flex items-center justify-center transition-all active:scale-95 shadow-md">
+                <span class="text-white font-semibold text-[16px] tracking-wide">Bayar & Keluar Parkir</span>
+            </button>
+        </div>
+
+        <div id="customModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="customModalContent" class="bg-white w-[280px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div id="modalIconSuccess" class="w-14 h-14 bg-green-100 rounded-full hidden items-center justify-center mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+                <div id="modalIconError" class="w-14 h-14 bg-red-100 rounded-full hidden items-center justify-center mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></div>
+                <h3 id="modalTitle" class="text-[18px] font-bold text-black mb-2 text-center">Judul</h3>
+                <p id="modalMessage" class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">Pesan modal disini</p>
+                <button id="modalBtn" class="w-full bg-[#0141A3] hover:bg-blue-800 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">Mengerti</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let finalDurasiMenit = 0;
+        let finalTotalTarif = 0;
+        let waktuMasukGlobal = null;
+        let jenisKendaraanGlobal = 'mobil'; // Default, ditimpa dari DB
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketId = urlParams.get('id');
+        // activeTickets localStorage tetap dipakai untuk cleanup setelah bayar
+        let activeTickets = JSON.parse(localStorage.getItem('active_tickets')) || [];
+
+        let modalRedirectUrl = null;
+        function showCustomAlert(type, title, message, redirectUrl = null) {
+            modalRedirectUrl = redirectUrl;
+            const modal = document.getElementById('customModal');
+            const modalContent = document.getElementById('customModalContent');
+            
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+
+            if (type === 'success') {
+                document.getElementById('modalIconSuccess').style.display = 'flex';
+                document.getElementById('modalIconError').style.display = 'none';
+            } else {
+                document.getElementById('modalIconSuccess').style.display = 'none';
+                document.getElementById('modalIconError').style.display = 'flex';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        document.getElementById('modalBtn').addEventListener('click', () => {
+            if (modalRedirectUrl) {
+                window.location.href = modalRedirectUrl;
+            } else {
+                const modal = document.getElementById('customModal');
+                const modalContent = document.getElementById('customModalContent');
+                modal.classList.remove('opacity-100');
+                modal.classList.add('opacity-0');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-90');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            // AMBIL DATA TIKET LANGSUNG DARI DATABASE (bukan localStorage)
+            // Sehingga data tetap ada meskipun user logout dan login kembali
+            const userData = JSON.parse(localStorage.getItem('user'));
+            if (!userData) {
+                showCustomAlert('error', 'Sesi Habis', 'Silakan login kembali.', 'login.html');
+                return;
+            }
+
+            let activeTicket = null;
+            try {
+                const response = await fetch(`http://localhost:3000/api/parkir/reservasi/user/${userData.id}`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    const dbTicket = result.data.find(t => t.kode_unik === ticketId);
+                    if (dbTicket) {
+                        const jenis = dbTicket.blok === 'Mobil' ? 'mobil' : 'motor';
+                        activeTicket = {
+                            id: dbTicket.kode_unik,
+                            lantai: dbTicket.lantai,
+                            slot: jenis === 'mobil' ? dbTicket.no_slot : dbTicket.blok,
+                            vehicle: {
+                                plate: dbTicket.plat || 'Kendaraan Anda',
+                                jenis: jenis,
+                                name: (dbTicket.merek && dbTicket.model) ? `${dbTicket.merek} ${dbTicket.model}` : 'Kendaraan'
+                            }
+                        };
+                    }
+                }
+            } catch (err) {
+                console.error("Gagal ambil data tiket dari server:", err);
+            }
+
+            if (!activeTicket) {
+                showCustomAlert('error', 'Tidak Ditemukan', 'Sistem tidak dapat menemukan tiket ini.', 'user-dashboard.html');
+                return;
+            }
+
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            const d = new Date();
+            document.getElementById('display-date').textContent = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+
+            const vehicle = activeTicket.vehicle;
+            jenisKendaraanGlobal = vehicle.jenis ? vehicle.jenis.toLowerCase() : 'mobil';
+
+            document.getElementById('display-vehicle-name').textContent = vehicle.name;
+            document.getElementById('display-vehicle-plate').textContent = vehicle.plate;
+
+            let slotText = vehicle.jenis === 'mobil' ? `${activeTicket.lantai}, Slot ${activeTicket.slot}` : `${activeTicket.lantai}, ${activeTicket.slot}`;
+            document.getElementById('display-slot').textContent = slotText;
+            document.getElementById('bill-title').textContent = slotText;
+
+            tarikInformasiTagihan();
+        });
+
+        async function tarikInformasiTagihan() {
+            try {
+                const response = await fetch(`http://localhost:3000/api/parkir/checkout-info/${ticketId}`);
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Simpan Waktu Check-In secara global
+                    waktuMasukGlobal = new Date(result.waktu_masuk);
+
+                    // Tampilkan Waktu Check In statis
+                    document.getElementById('waktu-masuk').textContent = waktuMasukGlobal.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB';
+
+                    // Mulai Live Durasi!
+                    mulaiHitungDurasiBerjalan();
+                }
+            } catch (err) {
+                console.error("Gagal menarik data dari server", err);
+            }
+        }
+
+        // ========================================================
+        // LOGIKA TIMER DURASI DAN HARGA YANG BERJALAN MAJU (LIVE)
+        // ========================================================
+        function mulaiHitungDurasiBerjalan() {
+            // Tentukan Tarif berdasarkan jenis kendaraan
+            const tarifPertama = jenisKendaraanGlobal === 'mobil' ? 10000 : 3000;
+            const tarifBerikutnya = jenisKendaraanGlobal === 'mobil' ? 2000 : 1000;
+
+            setInterval(() => {
+                const now = new Date();
+                
+                // Menghitung selisih waktu dalam detik murni
+                const diffMs = now.getTime() - waktuMasukGlobal.getTime();
+                const diffSecs = Math.floor(diffMs / 1000);
+                const diffMins = Math.floor(diffSecs / 60);
+                
+                const hours = Math.floor(diffSecs / 3600);
+                const mins = Math.floor((diffSecs % 3600) / 60);
+                const secs = diffSecs % 60;
+
+                // 1. Perbarui tampilan Waktu Sekarang yang terus berjalan
+                document.getElementById('waktu-keluar').textContent = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit', second: '2-digit'}) + ' WIB';
+
+                // 2. Perbarui teks durasi
+                let durasiTeks = '';
+                if (hours > 0) durasiTeks += `${hours} Jam `;
+                durasiTeks += `${mins} Menit ${secs} Detik`;
+                document.getElementById('durasi-parkir').textContent = durasiTeks;
+
+                // 3. Kalkulasi Harga Secara Real-Time (Setiap naik 1 jam, harga tambah)
+                let totalJam = Math.ceil(diffMins / 60); 
+                if (totalJam < 1) totalJam = 1; // Minimal bayar 1 jam pertama
+                
+                let totalHarga = tarifPertama;
+                if (totalJam > 1) {
+                    totalHarga += (totalJam - 1) * tarifBerikutnya;
+                }
+
+                document.getElementById('total-tagihan').textContent = `Rp ` + totalHarga.toLocaleString('id-ID');
+
+                // Simpan ke memori untuk dibayar nanti
+                finalDurasiMenit = diffMins;
+                finalTotalTarif = totalHarga;
+            }, 1000); // 1000 ms = berdetak setiap 1 detik!
+        }
+
+        async function bayarSekarang() {
+            const btn = document.querySelector('button');
+            btn.innerHTML = `<span class="text-white font-semibold text-[16px]">Memproses...</span>`;
+            
+            try {
+                const reqToken = await fetch('http://localhost:3000/api/parkir/get-snap-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        kode_unik: ticketId,
+                        total_tarif: finalTotalTarif
+                    })
+                });
+
+                const resToken = await reqToken.json();
+
+                if (resToken.status === 'success') {
+                    const currentOrderId = resToken.order_id; 
+                    
+                    window.snap.pay(resToken.token, {
+                        onSuccess: function(result) {
+                            selesaikanPesananDatabase(result.payment_type, currentOrderId);
+                        },
+                        onPending: function(result) {
+                            showCustomAlert('error', 'Menunggu Pembayaran', 'Selesaikan pembayaran Anda menggunakan metode yang dipilih.');
+                            btn.innerHTML = `<span class="text-white font-semibold text-[16px]">Bayar & Keluar Parkir</span>`;
+                        },
+                        onError: function(result) {
+                            showCustomAlert('error', 'Pembayaran Gagal', 'Proses pembayaran Anda tidak berhasil.');
+                            btn.innerHTML = `<span class="text-white font-semibold text-[16px]">Bayar & Keluar Parkir</span>`;
+                        },
+                        onClose: function() {
+                            showCustomAlert('error', 'Dibatalkan', 'Anda menutup jendela layar sebelum menyelesaikan pembayaran.');
+                            btn.innerHTML = `<span class="text-white font-semibold text-[16px]">Bayar & Keluar Parkir</span>`;
+                        }
+                    });
+                } else {
+                    showCustomAlert('error', 'Gagal', 'Tidak dapat memuat metode pembayaran dari server.');
+                    btn.innerHTML = `<span class="text-white font-semibold text-[16px]">Bayar & Keluar Parkir</span>`;
+                }
+
+            } catch (e) {
+                showCustomAlert('error', 'Error Server', 'Koneksi ke sistem Midtrans gagal.');
+                btn.innerHTML = `<span class="text-white font-semibold text-[16px]">Bayar & Keluar Parkir</span>`;
+            }
+        }
+
+        async function selesaikanPesananDatabase(paymentMethod, orderId) {
+            try {
+                const response = await fetch('http://localhost:3000/api/parkir/bayar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        kode_unik: ticketId,
+                        total_durasi: finalDurasiMenit,    
+                        total_tarif: finalTotalTarif,
+                        order_id: orderId,              
+                        payment_type: paymentMethod     
+                    })
+                });
+
+                if(response.ok) {
+                    activeTickets = activeTickets.filter(t => t.id !== ticketId);
+                    localStorage.setItem('active_tickets', JSON.stringify(activeTickets));
+                    
+                    showCustomAlert('success', 'Pembayaran Berhasil!', 'Terima kasih telah menggunakan Parkirin.', `ulasan.html?id=${ticketId}`);
+                }
+            } catch (e) {
+                showCustomAlert('error', 'Peringatan', 'Pembayaran lunas, tapi gagal memperbarui data server Anda.');
+            }
+        }
+    </script>
+</body>
+</html>

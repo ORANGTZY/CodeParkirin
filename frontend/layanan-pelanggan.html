@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F1F1F1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Layanan Pelanggan</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: #F1F1F1; 
+            margin: 0; 
+            overscroll-behavior-y: none;
+            overflow: hidden; 
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { 
+            from { opacity: 0; transform: translateX(20px); } 
+            to { opacity: 1; transform: translateX(0); } 
+        }
+
+        .chat-bubble-enter { animation: bubbleEnter 0.3s ease-out forwards; }
+        @keyframes bubbleEnter {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Styling spesifik input agar tidak ada outline bawaan browser */
+        input:focus { outline: none; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="w-full bg-[#FFFFFF] pt-12 pb-4 px-4 flex items-center z-30 shrink-0 border-b-2 border-[#A3ABC4]">
+            <a href="faq.html" class="text-[#0064F0] hover:opacity-80 active:scale-90 transition-transform cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-[26px] w-[26px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            
+            <div class="flex-grow pl-3">
+                <h1 class="text-[16px] font-bold text-black leading-tight flex items-center justify-between">
+                    Layanan Pelanggan
+                    <a href="profil.html" class="text-[#0062E6] hover:opacity-70">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                        </svg>
+                    </a>
+                </h1>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                    <div class="w-[9px] h-[9px] bg-[#008000] rounded-full"></div>
+                    <span class="text-[10px] font-medium text-black tracking-wide">PARKIRIN SUPPORT ONLINE</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="chat-container" class="flex-grow overflow-y-auto hide-scrollbar flex flex-col pt-4 pb-28 px-5 relative z-10 scroll-smooth">
+            
+            <div class="flex justify-center mb-6">
+                <div class="bg-[#D9D9D9] bg-opacity-50 rounded-full px-4 py-1">
+                    <span class="text-[12px] font-medium text-black">HARI INI</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col mb-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-10 h-10 bg-[#D9D9D9] rounded-[10px] flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-[12px] text-black">SmartBot</span>
+                </div>
+                <div class="bg-[#FFFFFF] rounded-[8px] p-3 max-w-[250px] relative shadow-sm rounded-tl-none">
+                    <p class="text-[14px] font-medium text-black leading-snug">
+                        Halo! Saya SmartBot. Ada yang bisa saya bantu terkait reservasi parkir Anda di Ambarrukmo Plaza?
+                    </p>
+                    <span class="text-[10px] text-gray-500 absolute bottom-2 right-2">09.35</span>
+                    <div class="h-4"></div> </div>
+            </div>
+
+            <div class="flex flex-col items-end mb-6">
+                <div class="bg-[#D9D9D9] rounded-[8px] p-3 max-w-[250px] relative shadow-sm rounded-tr-none">
+                    <p class="text-[14px] font-medium text-black leading-snug">
+                        Saya ingin menanyakan status pembayaran untuk ID9876543210. Apakah pembayarannya sudah berhasil?
+                    </p>
+                    <span class="text-[10px] text-gray-600 absolute bottom-2 right-2">09.36</span>
+                    <div class="h-4"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-center mb-6">
+                <span class="text-[9px] font-medium text-black">Agen <span class="text-[#0062E6]">John</span> telah bergabung ke dalam percakapan</span>
+            </div>
+
+            <div class="flex flex-col mb-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-10 h-10 bg-[#D9D9D9] rounded-[10px] flex items-center justify-center overflow-hidden">
+                        <span class="text-2xl">👨‍💼</span>
+                    </div>
+                    <span class="font-semibold text-[12px] text-black">John</span>
+                </div>
+                <div class="bg-[#FFFFFF] rounded-[8px] p-3 max-w-[250px] relative shadow-sm rounded-tl-none">
+                    <p class="text-[14px] font-medium text-black leading-snug">
+                        Selamat Pagi! Saya sudah cek untuk ID9876543210 status pembayarannya sudah Berhasil. Apakah Anda ingin saya bantu untuk mengirimkan bukti struk digitalnya ke email Anda?
+                    </p>
+                    <span class="text-[10px] text-gray-500 absolute bottom-2 right-2">09.40</span>
+                    <div class="h-4"></div>
+                </div>
+            </div>
+
+            <div id="chat-anchor"></div>
+
+        </div>
+
+        <div class="absolute bottom-0 left-0 w-full p-4 pb-6 bg-[#F1F1F1] z-20">
+            <div class="w-full bg-[#0141A3] rounded-[30px] h-[60px] flex items-center px-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]">
+                
+                <button class="text-white hover:opacity-70 transition-opacity p-1 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+                
+                <button class="text-white hover:opacity-70 transition-opacity p-1 ml-1 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+
+                <div class="flex-grow mx-3 h-[39px] bg-[#F3F3FF] bg-opacity-20 rounded-[10px] overflow-hidden flex items-center px-3">
+                    <input type="text" id="chat-input" placeholder="Ketik pesan..." class="w-full h-full bg-transparent text-white text-[12px] font-semibold placeholder-white placeholder-opacity-70" onkeypress="handleEnter(event)">
+                </div>
+
+                <button onclick="sendChat()" class="w-8 h-8 bg-[#00D1FF] rounded-full flex items-center justify-center shrink-0 hover:bg-cyan-400 active:scale-90 transition-all cursor-pointer shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white transform rotate-45 -mr-0.5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Memastikan scroll selalu berada di paling bawah
+        function scrollToBottom() {
+            const container = document.getElementById('chat-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Jalankan scrollToBottom saat halaman pertama dimuat
+        document.addEventListener("DOMContentLoaded", () => {
+            scrollToBottom();
+        });
+
+        // Tangkap input jika user menekan tombol Enter
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendChat();
+            }
+        }
+
+        function getCurrentTime() {
+            const now = new Date();
+            let hours = now.getHours().toString().padStart(2, '0');
+            let minutes = now.getMinutes().toString().padStart(2, '0');
+            return `${hours}.${minutes}`;
+        }
+
+        function sendChat() {
+            const inputField = document.getElementById('chat-input');
+            const message = inputField.value.trim();
+            
+            if (message === "") return; // Abaikan jika kosong
+
+            const chatAnchor = document.getElementById('chat-anchor');
+            const timeStr = getCurrentTime();
+
+            // 1. Buat Elemen Chat untuk User (Kanan)
+            const userChatHTML = `
+                <div class="flex flex-col items-end mb-6 chat-bubble-enter">
+                    <div class="bg-[#D9D9D9] rounded-[8px] p-3 max-w-[250px] relative shadow-sm rounded-tr-none">
+                        <p class="text-[14px] font-medium text-black leading-snug">${message}</p>
+                        <span class="text-[10px] text-gray-600 absolute bottom-2 right-2">${timeStr}</span>
+                        <div class="h-4"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Masukkan chat user ke layar
+            chatAnchor.insertAdjacentHTML('beforebegin', userChatHTML);
+            inputField.value = ""; // Kosongkan input
+            scrollToBottom();
+
+            // 2. Trigger Bot Auto-Reply dengan Delay (Seolah sedang mengetik)
+            setTimeout(() => {
+                botReply(message, timeStr);
+            }, 1000 + Math.random() * 1000); // Delay acak antara 1 sampai 2 detik
+        }
+
+        function botReply(userMessage, timeStr) {
+            const chatAnchor = document.getElementById('chat-anchor');
+            const msgLower = userMessage.toLowerCase();
+            let replyText = "";
+            let botName = "John"; // Defaultnya John (Manusia) yang membalas
+            let botIcon = "👨‍💼";
+
+            // LOGIKA PENDETEKSI KONTEKS SEDERHANA
+            if (msgLower.includes("ya") || msgLower.includes("mau") || msgLower.includes("boleh")) {
+                replyText = "Baik, struk digital untuk transaksi ID9876543210 telah berhasil dikirimkan ke email Anda. Ada hal lain yang bisa saya bantu hari ini?";
+            } else if (msgLower.includes("tidak") || msgLower.includes("enggak") || msgLower.includes("cukup")) {
+                replyText = "Baiklah jika dirasa sudah cukup. Terima kasih telah menghubungi Customer Service Parkirin. Semoga hari Anda menyenangkan!";
+            } else if (msgLower.includes("parkir") || msgLower.includes("lokasi") || msgLower.includes("mall")) {
+                replyText = "Terkait lokasi parkir dan ketersediaan slot, Anda dapat melihatnya secara langsung secara *real-time* di menu Home (Utama) aplikasi ya.";
+            } else if (msgLower.includes("saldo") || msgLower.includes("uang") || msgLower.includes("top up")) {
+                replyText = "Untuk kendala Top Up saldo atau dana yang belum masuk, mohon lampirkan bukti transfernya di sini agar dapat segera kami periksa ke sistem mutasi bank kami.";
+            } else if (msgLower.includes("halo") || msgLower.includes("pagi") || msgLower.includes("siang")) {
+                replyText = "Halo kembali! Silakan sampaikan kendala atau pertanyaan Anda, saya siap membantu.";
+            } else {
+                // Jawaban default jika konteks tidak dikenali
+                replyText = "Mohon maaf, saya kurang memahami maksud Anda. Bisa tolong jelaskan lebih detail agar saya dapat memberikan solusi yang tepat?";
+            }
+
+            // Buat Elemen Chat untuk Bot (Kiri)
+            const botChatHTML = `
+                <div class="flex flex-col mb-4 chat-bubble-enter">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-10 h-10 bg-[#D9D9D9] rounded-[10px] flex items-center justify-center overflow-hidden">
+                            <span class="text-2xl">${botIcon}</span>
+                        </div>
+                        <span class="font-semibold text-[12px] text-black">${botName}</span>
+                    </div>
+                    <div class="bg-[#FFFFFF] rounded-[8px] p-3 max-w-[250px] relative shadow-sm rounded-tl-none">
+                        <p class="text-[14px] font-medium text-black leading-snug">${replyText}</p>
+                        <span class="text-[10px] text-gray-500 absolute bottom-2 right-2">${timeStr}</span>
+                        <div class="h-4"></div>
+                    </div>
+                </div>
+            `;
+
+            // Masukkan balasan bot ke layar
+            chatAnchor.insertAdjacentHTML('beforebegin', botChatHTML);
+            scrollToBottom();
+        }
+    </script>
+</body>
+</html>

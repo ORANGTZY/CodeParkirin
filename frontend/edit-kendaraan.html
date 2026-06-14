@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+    <title>Parkirin - Edit Kendaraan</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .slide-in { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        input[type="radio"]:checked + div { background-color: #000; box-shadow: inset 0 0 0 4px #F5F5F5; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in">
+        <div class="w-full h-[120px] bg-[#F5F5F5] pt-12 px-4 flex items-center shadow-sm z-20 shrink-0">
+            <a href="kendaraan.html" class="text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+            </a>
+            <h1 class="text-[20px] font-bold text-[#0064F0]">Edit kendaraan</h1>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar z-10 flex flex-col pb-32">
+            <div class="w-full bg-[#F5F5F5] px-4 pt-4 pb-6 mt-[11px]">
+                <p class="text-[12px] font-medium text-[#A4A4A4] mb-4">Pilih Kendaraan</p>
+                <div class="flex gap-8 mb-8">
+                    <label class="flex items-center gap-3 cursor-pointer group select-none">
+                        <div class="relative flex items-center justify-center">
+                            <input type="radio" id="radio-motor" name="jenis_kendaraan" value="motor" class="peer sr-only">
+                            <div class="w-[25px] h-[25px] border-2 border-black rounded-full transition-all peer-checked:border-[6px]"></div>
+                        </div>
+                        <img src="assets/img/elemenmotorcycle.png" alt="Motor" class="h-8 w-8 object-contain">
+                        <span class="font-semibold text-[20px] text-black">Motor</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group select-none">
+                        <div class="relative flex items-center justify-center">
+                            <input type="radio" id="radio-mobil" name="jenis_kendaraan" value="mobil" class="peer sr-only">
+                            <div class="w-[25px] h-[25px] border-2 border-black rounded-full transition-all peer-checked:border-[6px]"></div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-black" viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+                        <span class="font-semibold text-[20px] text-black">Mobil</span>
+                    </label>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <div class="relative w-full h-[68px] bg-[#EDEDED] border-b border-black">
+                        <label class="absolute left-5 top-2.5 text-[8px] font-semibold text-[#A4A4A4]">Plat Nomor Kendaraan</label>
+                        <input type="text" id="edit-plat" class="absolute left-5 bottom-2 w-[calc(100%-40px)] bg-transparent text-[15px] font-semibold text-black focus:outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative w-full h-[68px] bg-[#EDEDED] border-b border-black">
+                            <label class="absolute left-5 top-2.5 text-[8px] font-semibold text-[#A4A4A4]">Merek</label>
+                            <input type="text" id="edit-merek" class="absolute left-5 bottom-2 w-[calc(100%-30px)] bg-transparent text-[15px] font-semibold text-black focus:outline-none">
+                        </div>
+                        <div class="relative w-full h-[68px] bg-[#EDEDED] border-b border-black">
+                            <label class="absolute left-5 top-2.5 text-[8px] font-semibold text-[#A4A4A4]">Model</label>
+                            <input type="text" id="edit-model" class="absolute left-5 bottom-2 w-[calc(100%-30px)] bg-transparent text-[15px] font-semibold text-black focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative w-full h-[68px] bg-[#EDEDED] border-b border-black">
+                            <label class="absolute left-5 top-2.5 text-[8px] font-semibold text-[#A4A4A4]">Tahun Produksi</label>
+                            <input type="number" id="edit-tahun" class="absolute left-5 bottom-2 w-[calc(100%-30px)] bg-transparent text-[15px] font-semibold text-black focus:outline-none">
+                        </div>
+                        <div class="relative w-full h-[68px] bg-[#EDEDED] border-b border-black">
+                            <label class="absolute left-5 top-2.5 text-[8px] font-semibold text-[#A4A4A4]">Warna</label>
+                            <input type="text" id="edit-warna" class="absolute left-5 bottom-2 w-[calc(100%-30px)] bg-transparent text-[15px] font-semibold text-black focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-[#F5F5F5] px-4 py-6 mt-[11px]">
+                <h2 class="text-[16px] font-semibold text-black mb-4">Informasi STNK</h2>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="relative w-full h-[68px] bg-[#EDEDED] border-b border-black">
+                        <label class="absolute left-5 top-2.5 text-[8px] font-semibold text-[#A4A4A4]">Nomor Mesin</label>
+                        <input type="text" id="edit-mesin" class="absolute left-5 bottom-2 w-[calc(100%-30px)] bg-transparent text-[15px] font-semibold text-black focus:outline-none">
+                    </div>
+                    <div class="relative w-full h-[68px] bg-[#EDEDED] border-b border-black">
+                        <label class="absolute left-5 top-2.5 text-[8px] font-semibold text-[#A4A4A4]">Nomor Rangka</label>
+                        <input type="text" id="edit-rangka" class="absolute left-5 bottom-2 w-[calc(100%-30px)] bg-transparent text-[15px] font-semibold text-black focus:outline-none">
+                    </div>
+                </div>
+                <h3 class="text-[10px] font-semibold text-black mb-3">Upload Dokumen Yang dibutuhkan</h3>
+                <div class="relative w-full mt-2">
+                    <label id="upload-box" class="w-full h-[70px] border border-dashed border-[#D9D9D9] flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors rounded">
+                        <span class="text-[13px] font-semibold text-[#A4A4A4]">STNK (Edit Ulang)</span>
+                        <input type="file" id="stnk-input" class="hidden" accept="image/*" onchange="previewImage(event)">
+                    </label>
+                    <div id="preview-box" class="hidden relative w-full h-[150px] bg-white border border-[#D9D9D9] rounded flex items-center justify-center p-2 shadow-sm">
+                        <img id="upload-preview" class="w-full h-full object-contain" alt="STNK Preview">
+                        <button onclick="hapusGambar()" class="absolute -top-3 -right-2 w-7 h-7 bg-[#E53935] text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-700 active:scale-90 transition-transform">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-0 w-full h-[81px] bg-[#F5F5F5] z-20 flex flex-col items-center justify-center px-4 shadow-[0_-5px_15px_rgba(0,0,0,0.02)]">
+            <div class="flex w-full gap-3">
+                <button onclick="hapusKendaraan()" class="w-[30%] h-[36px] bg-red-100 rounded-[10px] flex items-center justify-center hover:bg-red-200 active:scale-95 transition-all shadow-sm">
+                    <span class="text-[12px] font-semibold text-red-600">Hapus</span>
+                </button>
+                <button onclick="simpanPerubahan()" class="flex-grow h-[36px] bg-[#0141A3] rounded-[10px] flex items-center justify-center hover:bg-blue-800 active:scale-95 transition-all shadow-sm">
+                    <span class="text-[12px] font-semibold text-white">Simpan Perubahan</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let editId = null;
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('id')) {
+                editId = urlParams.get('id');
+                await loadDetailKendaraan(editId);
+            }
+        });
+
+        async function loadDetailKendaraan(id) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/kendaraan/detail/${id}`);
+                const result = await response.json();
+                
+                if (result.data) {
+                    const k = result.data;
+                    if (k.jenis === 'motor') document.getElementById('radio-motor').checked = true;
+                    else document.getElementById('radio-mobil').checked = true;
+
+                    document.getElementById('edit-plat').value = k.plat || "";
+                    document.getElementById('edit-merek').value = k.merek || "";
+                    document.getElementById('edit-model').value = k.model || "";
+                    document.getElementById('edit-tahun').value = k.tahun || "";
+                    document.getElementById('edit-warna').value = k.warna || "";
+                    document.getElementById('edit-mesin').value = k.mesin || "";
+                    document.getElementById('edit-rangka').value = k.rangka || "";
+                }
+            } catch(e) {
+                console.error("Gagal menarik data.");
+            }
+        }
+
+        async function simpanPerubahan() {
+            const payload = {
+                jenis: document.querySelector('input[name="jenis_kendaraan"]:checked').value,
+                plat: document.getElementById('edit-plat').value,
+                merek: document.getElementById('edit-merek').value,
+                model: document.getElementById('edit-model').value,
+                tahun: document.getElementById('edit-tahun').value,
+                warna: document.getElementById('edit-warna').value,
+                mesin: document.getElementById('edit-mesin').value,
+                rangka: document.getElementById('edit-rangka').value
+            };
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/kendaraan/${editId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if(response.ok) window.location.href = 'kendaraan.html';
+                else alert("Gagal mengupdate kendaraan");
+            } catch (err) {
+                alert('Server Error');
+            }
+        }
+
+        async function hapusKendaraan() {
+            try {
+                const response = await fetch(`http://localhost:3000/api/kendaraan/${editId}`, { method: 'DELETE' });
+                if(response.ok) window.location.href = 'kendaraan.html';
+            } catch (err) {
+                alert('Server Error');
+            }
+        }
+
+        function previewImage(event) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('upload-preview').src = e.target.result;
+                    document.getElementById('upload-box').classList.add('hidden');
+                    document.getElementById('preview-box').classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        function hapusGambar() {
+            document.getElementById('stnk-input').value = "";
+            document.getElementById('upload-preview').src = "";
+            document.getElementById('preview-box').classList.add('hidden');
+            document.getElementById('upload-box').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

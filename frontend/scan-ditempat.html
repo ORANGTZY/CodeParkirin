@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+
+    <title>Parkirin - Scan di Tempat</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; user-select: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Area Scan Animasi */
+        .scan-frame { position: relative; }
+        .scan-frame::before,
+        .scan-frame::after { content: ''; position: absolute; width: 28px; height: 28px; z-index: 10; }
+        .corner-tl { top: 0; left: 0; border-top: 3px solid #0064F0; border-left: 3px solid #0064F0; border-radius: 4px 0 0 0; }
+        .corner-tr { top: 0; right: 0; border-top: 3px solid #0064F0; border-right: 3px solid #0064F0; border-radius: 0 4px 0 0; }
+        .corner-bl { bottom: 0; left: 0; border-bottom: 3px solid #0064F0; border-left: 3px solid #0064F0; border-radius: 0 0 0 4px; }
+        .corner-br { bottom: 0; right: 0; border-bottom: 3px solid #0064F0; border-right: 3px solid #0064F0; border-radius: 0 0 4px 0; }
+
+        /* Garis scan berjalan */
+        .scan-line {
+            position: absolute;
+            left: 6px; right: 6px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #0064F0, transparent);
+            animation: scanMove 2s ease-in-out infinite;
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(0, 100, 240, 0.6);
+            z-index: 20;
+        }
+        @keyframes scanMove {
+            0%   { top: 8px; opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { top: calc(100% - 8px); opacity: 0; }
+        }
+
+        /* Video kamera real-time */
+        #camera-video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            display: block;
+        }
+        /* Canvas tersembunyi untuk decode frame */
+        #camera-canvas { display: none; }
+
+        /* QR berhasil — highlight hijau */
+        .qr-success-overlay {
+            position: absolute; inset: 0;
+            background: rgba(40, 167, 69, 0.35);
+            border-radius: 8px;
+            z-index: 15;
+            display: flex; align-items: center; justify-content: center;
+            animation: flashGreen 0.4s ease-out forwards;
+        }
+        @keyframes flashGreen {
+            0%   { opacity: 0; }
+            50%  { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Status kamera */
+        .camera-status {
+            position: absolute; bottom: 8px; left: 0; right: 0;
+            text-align: center; z-index: 20;
+        }
+
+        /* Tombol bypass pulse */
+        .bypass-btn { transition: all 0.2s; }
+        .bypass-btn:active { transform: scale(0.96); }
+
+        /* Tab aktif */
+        .tab-active { background-color: #0141A3; color: white; }
+        .tab-inactive { background-color: #E3E1ED; color: #555; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+
+        <div class="w-full h-[100px] bg-[#F5F5F5] pt-12 px-4 flex items-center shrink-0 shadow-sm z-20 border-b border-gray-200">
+            <a href="javascript:history.back()" class="flex items-center text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <span class="ml-2 font-bold text-[20px] text-[#0064F0]">Scan di Tempat</span>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar flex flex-col pb-6 relative">
+
+            <div class="flex gap-2 px-4 mt-5 mb-5">
+                <button id="tab-scan" onclick="gantiTab('scan')" class="tab-active flex-1 h-[36px] rounded-[10px] font-semibold text-[12px] transition-all shadow-sm">
+                    Scan QR
+                </button>
+                <button id="tab-manual" onclick="gantiTab('manual')" class="tab-inactive flex-1 h-[36px] rounded-[10px] font-semibold text-[12px] transition-all shadow-sm">
+                    Input Manual
+                </button>
+            </div>
+
+            <div id="panel-scan" class="flex flex-col items-center px-4">
+
+                <p class="text-[12px] font-medium text-gray-500 text-center mb-5 leading-relaxed">
+                    Arahkan kamera ke QR Code tiket parkir Anda untuk scan otomatis.
+                </p>
+
+                <div class="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-[16px] p-5 flex flex-col items-center shadow-sm mb-5">
+
+                    <div id="scan-area" class="scan-frame corner-tl corner-tr corner-bl corner-br w-[220px] h-[220px] bg-[#0F172A] rounded-[10px] overflow-hidden relative mb-4">
+                        <div id="scan-line-el" class="scan-line"></div>
+
+                        <video id="camera-video" autoplay muted playsinline></video>
+
+                        <canvas id="camera-canvas"></canvas>
+
+                        <div id="camera-placeholder" class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="text-white text-[10px] font-medium opacity-40">Kamera belum aktif</span>
+                        </div>
+
+                        <div class="camera-status">
+                            <span id="scan-status-text" class="text-white text-[9px] font-semibold bg-black bg-opacity-50 px-2 py-0.5 rounded-full"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 w-full mb-3">
+                        <button id="btn-aktifkan-kamera" onclick="aktifkanKamera()"
+                            class="flex-1 h-[42px] bg-[#0141A3] hover:bg-blue-900 rounded-[10px] flex items-center justify-center gap-2 text-white font-semibold text-[12px] transition-all active:scale-95 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.845v6.31a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            Aktifkan Kamera
+                        </button>
+                        <button id="btn-matikan-kamera" onclick="matikanKamera()"
+                            class="hidden flex-1 h-[42px] bg-red-500 hover:bg-red-600 rounded-[10px] flex items-center justify-center gap-2 text-white font-semibold text-[12px] transition-all active:scale-95 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                            Matikan Kamera
+                        </button>
+                        <button id="btn-ganti-kamera" onclick="gantiKamera()"
+                            class="hidden h-[42px] w-[42px] bg-[#E3E1ED] hover:bg-gray-300 rounded-[10px] flex items-center justify-center transition-all active:scale-95 shadow-sm shrink-0" title="Ganti kamera depan/belakang">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <p id="camera-hint" class="text-[10px] font-medium text-gray-400 text-center">Tekan "Aktifkan Kamera" lalu arahkan ke QR Code tiket.</p>
+                </div>
+
+                <button onclick="bukaInputSimulasi()" class="w-full h-[40px] border border-[#D9D9D9] bg-white hover:bg-gray-50 rounded-[10px] flex items-center justify-center gap-2 text-gray-500 font-semibold text-[11px] transition-all active:scale-95 mb-4 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m2-6h4M9 3v4a2 2 0 01-2 2H3m18 0V5a2 2 0 00-2-2h-4m4 2h-4M21 9v4a2 2 0 01-2 2h-4m4-2h-4" />
+                    </svg>
+                    Gunakan Simulasi (tanpa kamera)
+                </button>
+
+                <div id="info-tiket-scan" class="w-full hidden">
+                    <div class="w-full bg-[#D8F6FF] border border-[#0064F0] rounded-[12px] p-4 flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-[#0064F0] rounded-full flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-semibold text-black">QR Terbaca!</p>
+                            <p id="info-tiket-id-scan" class="text-[10px] font-medium text-gray-600 mt-0.5">-</p>
+                        </div>
+                    </div>
+                    <button onclick="lanjutKePilihKendaraanScan()" class="bypass-btn w-full h-[48px] bg-[#0141A3] hover:bg-blue-900 rounded-[10px] flex items-center justify-center gap-2 shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                        <span class="text-white font-semibold text-[13px]">Lanjut Pilih Kendaraan</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="panel-manual" class="hidden flex-col items-center px-4">
+
+                <p class="text-[12px] font-medium text-gray-500 text-center mb-5 leading-relaxed">
+                    Masukkan nomor plat kendaraan Anda untuk memilih slot parkir secara manual.
+                </p>
+
+                <div class="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-[16px] p-5 flex flex-col shadow-sm mb-4">
+                    <label class="text-[12px] font-semibold text-black mb-2">Nomor Plat Kendaraan</label>
+                    <input id="input-kode-manual" type="text" placeholder="Contoh: B 1234 XYZ" maxlength="15"
+                        class="w-full bg-white border border-[#D9D9D9] rounded-[10px] h-[50px] px-4 text-[14px] font-bold text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0064F0] tracking-widest uppercase transition-all">
+                    <p class="text-[10px] text-gray-400 mt-2">Plat kendaraan harus terdaftar di akun Anda.</p>
+                </div>
+
+                <div id="info-tiket-manual" class="w-full hidden mb-4">
+                    <div class="w-full bg-[#D8F6FF] border border-[#0064F0] rounded-[12px] p-4 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-[#0064F0] rounded-full flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-semibold text-black">Tiket Valid</p>
+                            <p id="info-tiket-id-manual" class="text-[10px] font-medium text-gray-600 mt-0.5">-</p>
+                            <p id="info-tiket-slot-manual" class="text-[10px] font-medium text-gray-500 mt-0.5">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="cariTiketManual()" class="bypass-btn w-full h-[48px] bg-[#0141A3] hover:bg-blue-900 rounded-[10px] flex items-center justify-center gap-2 shadow-md mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span class="text-white font-semibold text-[13px]">Cari Kendaraan</span>
+                </button>
+
+                <button id="btn-lanjut-manual" onclick="lanjutKePilihSlotManual()" class="bypass-btn w-full h-[48px] bg-[#28A745] hover:bg-green-700 rounded-[10px] items-center justify-center gap-2 shadow-md hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                    <span class="text-white font-semibold text-[13px]">Lanjut Pilih Slot Parkir</span>
+                </button>
+            </div>
+
+        </div>
+
+        <div id="modalJamOperasional" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="modalJamOpContent" class="bg-white w-[300px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300 mx-4">
+                <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-[17px] font-bold text-black mb-2 text-center">Di Luar Jam Operasional</h3>
+                <p class="text-[12px] font-medium text-gray-500 text-center mb-2 leading-relaxed">
+                    Fitur Scan di Tempat hanya tersedia pada jam operasional parkir:
+                </p>
+                <div class="bg-orange-50 border border-orange-200 rounded-[10px] px-4 py-2 mb-5 w-full text-center">
+                    <span class="text-[15px] font-bold text-orange-600">08.00 – 20.00 WIB</span>
+                </div>
+                <p id="modalJamSekarang" class="text-[11px] text-gray-400 mb-5">Waktu saat ini: -</p>
+                <button onclick="tutupModalJamOp(); window.history.back();" class="w-full bg-[#0141A3] hover:bg-blue-900 text-white font-bold py-3 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">
+                    Kembali
+                </button>
+            </div>
+        </div>
+
+        <div id="modalTiketAktif" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="modalTiketAktifContent" class="bg-white w-[300px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300 mx-4">
+                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-[17px] font-bold text-black mb-2 text-center">Kendaraan Sedang Parkir</h3>
+                <p class="text-[12px] font-medium text-gray-500 text-center mb-3 leading-relaxed">
+                    Kendaraan dengan plat berikut sudah memiliki tiket parkir aktif:
+                </p>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-[10px] px-4 py-2 mb-2 w-full text-center">
+                    <span id="modalPlatTiketAktif" class="text-[15px] font-bold text-yellow-700 tracking-widest">-</span>
+                </div>
+                <p id="modalInfoTiketAktif" class="text-[11px] text-gray-400 text-center mb-5 leading-relaxed">-</p>
+                <div class="flex gap-3 w-full">
+                    <button onclick="tutupModalTiketAktif()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-[12px] text-[12px] transition-colors active:scale-95">
+                        Tutup
+                    </button>
+                    <button onclick="tutupModalTiketAktif(); window.location.href='tiket.html';" class="flex-1 bg-[#0141A3] hover:bg-blue-900 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">
+                        Lihat Tiket
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modalSimulasi" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="modalSimulasiContent" class="bg-white w-[300px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300 mx-4">
+                <div class="w-14 h-14 bg-[#D8F6FF] rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#0141A3]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 3.5V16m0 0v.01" />
+                    </svg>
+                </div>
+                <h3 class="text-[16px] font-bold text-black mb-1 text-center">Simulasi Scan Masuk</h3>
+                <p class="text-[11px] font-medium text-gray-500 text-center mb-4 leading-relaxed">Masukkan Plat / ID Tiket untuk mengecek DB, kosongkan untuk membuat tiket baru.</p>
+
+                <input id="input-kode-simulasi" type="text" placeholder="(Opsional) Nomor plat kendaraan" maxlength="15"
+                    class="w-full bg-gray-100 border border-[#D9D9D9] rounded-[10px] h-[46px] px-4 text-[13px] font-bold text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0064F0] tracking-widest uppercase mb-4 transition-all">
+
+                <div class="flex gap-3 w-full">
+                    <button onclick="tutupModalSimulasi()" class="flex-1 h-[42px] bg-gray-100 hover:bg-gray-200 rounded-[10px] font-semibold text-[12px] text-gray-600 transition-all active:scale-95">
+                        Batal
+                    </button>
+                    <button onclick="prosesSimulasiScan()" class="flex-1 h-[42px] bg-[#0141A3] hover:bg-blue-900 rounded-[10px] font-semibold text-[12px] text-white transition-all active:scale-95 shadow-sm">
+                        Proses
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="customModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="customModalContent" class="bg-white w-[280px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div id="modalIconSuccess" class="w-14 h-14 bg-green-100 rounded-full hidden items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <div id="modalIconWarning" class="w-14 h-14 bg-yellow-100 rounded-full hidden items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                </div>
+                <div id="modalIconError" class="w-14 h-14 bg-red-100 rounded-full hidden items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                </div>
+                <h3 id="modalTitle" class="text-[18px] font-bold text-black mb-2 text-center">Info</h3>
+                <p id="modalMessage" class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">-</p>
+                <button onclick="tutupCustomModal()" class="w-full bg-[#0141A3] hover:bg-blue-800 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">Mengerti</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        let ticketIdDitemukan = null;
+
+        // STATE KAMERA
+        let streamKamera      = null;
+        let animFrameId       = null;
+        let kameraAktif       = false;
+        let qrSudahTerbaca    = false;
+        let facingMode        = 'environment';
+
+        // ============================================================
+        // JAM OPERASIONAL
+        // ============================================================
+        const JAM_BUKA  = 8;   // 08:00
+        const JAM_TUTUP = 20;  // 20:00
+
+        function dalamJamOperasional() {
+            const now  = new Date();
+            const jam  = now.getHours();
+            if (jam < JAM_BUKA) return false;
+            if (jam >= JAM_TUTUP) return false;
+            return true;
+        }
+
+        function formatJamSekarang() {
+            const now = new Date();
+            const hh  = String(now.getHours()).padStart(2, '0');
+            const mm  = String(now.getMinutes()).padStart(2, '0');
+            return `${hh}.${mm} WIB`;
+        }
+
+        function tampilkanModalJamOp() {
+            document.getElementById('modalJamSekarang').textContent = `Waktu saat ini: ${formatJamSekarang()}`;
+            const modal   = document.getElementById('modalJamOperasional');
+            const content = document.getElementById('modalJamOpContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModalJamOp() {
+            const modal   = document.getElementById('modalJamOperasional');
+            const content = document.getElementById('modalJamOpContent');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        // ============================================================
+        // CEK TIKET AKTIF BERDASARKAN PLAT KENDARAAN (DB MYSQL)
+        // ============================================================
+        async function cekTiketAktifPlat(plat, userId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/parkir/reservasi/user/${userId}`);
+                const result   = await response.json();
+
+                if (result.status === 'success' && result.data && result.data.length > 0) {
+                    const tiketAktif = result.data.find(t =>
+                        (t.status === 'Aktif' || t.status === 'Menunggu') &&
+                        t.plat && t.plat.toUpperCase().replace(/\s/g, '') === plat.replace(/\s/g, '')
+                    );
+                    return tiketAktif || null;
+                }
+                return null;
+            } catch (err) {
+                console.error('Gagal cek tiket aktif:', err);
+                return null;
+            }
+        }
+
+        function tampilkanModalTiketAktif(plat, infoTambahan) {
+            document.getElementById('modalPlatTiketAktif').textContent  = plat;
+            document.getElementById('modalInfoTiketAktif').textContent  = infoTambahan || 'Selesaikan sesi parkir yang berjalan terlebih dahulu.';
+            const modal   = document.getElementById('modalTiketAktif');
+            const content = document.getElementById('modalTiketAktifContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModalTiketAktif() {
+            const modal   = document.getElementById('modalTiketAktif');
+            const content = document.getElementById('modalTiketAktifContent');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        // ============================================================
+        // FUNGSI KAMERA REAL-TIME (TIDAK ADA YANG DIHAPUS)
+        // ============================================================
+        async function aktifkanKamera() {
+            if (kameraAktif) return;
+            if (!dalamJamOperasional()) { tampilkanModalJamOp(); return; }
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                tampilkanAlert('error', 'Tidak Didukung', 'Browser Anda tidak mendukung akses kamera. Gunakan Chrome atau Safari terbaru.');
+                return;
+            }
+
+            aturStatusKamera('memuat');
+
+            try {
+                streamKamera = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: facingMode, width:  { ideal: 640 }, height: { ideal: 640 } },
+                    audio: false
+                });
+
+                const video = document.getElementById('camera-video');
+                video.srcObject = streamKamera;
+
+                video.onloadedmetadata = () => {
+                    video.play();
+                    kameraAktif = true;
+                    qrSudahTerbaca = false;
+
+                    document.getElementById('camera-placeholder').style.display = 'none';
+                    document.getElementById('btn-aktifkan-kamera').classList.add('hidden');
+                    document.getElementById('btn-matikan-kamera').classList.remove('hidden');
+                    document.getElementById('btn-matikan-kamera').classList.add('flex');
+                    document.getElementById('btn-ganti-kamera').classList.remove('hidden');
+                    document.getElementById('btn-ganti-kamera').classList.add('flex');
+                    document.getElementById('camera-hint').textContent = 'Arahkan kamera ke QR Code tiket parkir Anda.';
+
+                    aturStatusKamera('aktif');
+                    loopScanQR();
+                };
+            } catch (err) {
+                aturStatusKamera('error');
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    tampilkanAlert('error', 'Izin Ditolak', 'Izin kamera ditolak. Buka pengaturan browser dan izinkan akses kamera.');
+                } else {
+                    tampilkanAlert('error', 'Gagal Akses', 'Tidak dapat mengakses kamera: ' + err.message);
+                }
+            }
+        }
+
+        function matikanKamera() {
+            if (streamKamera) {
+                streamKamera.getTracks().forEach(track => track.stop());
+                streamKamera = null;
+            }
+            if (animFrameId) {
+                cancelAnimationFrame(animFrameId);
+                animFrameId = null;
+            }
+
+            const video = document.getElementById('camera-video');
+            video.srcObject = null;
+
+            kameraAktif    = false;
+            qrSudahTerbaca = false;
+
+            document.getElementById('camera-placeholder').style.display = 'flex';
+            document.getElementById('btn-aktifkan-kamera').classList.remove('hidden');
+            document.getElementById('btn-matikan-kamera').classList.add('hidden');
+            document.getElementById('btn-matikan-kamera').classList.remove('flex');
+            document.getElementById('btn-ganti-kamera').classList.add('hidden');
+            document.getElementById('btn-ganti-kamera').classList.remove('flex');
+            document.getElementById('camera-hint').textContent = 'Tekan "Aktifkan Kamera" lalu arahkan ke QR Code tiket.';
+
+            aturStatusKamera('mati');
+        }
+
+        async function gantiKamera() {
+            facingMode = facingMode === 'environment' ? 'user' : 'environment';
+            matikanKamera();
+            await aktifkanKamera();
+        }
+
+        function loopScanQR() {
+            if (!kameraAktif || qrSudahTerbaca) return;
+
+            const video  = document.getElementById('camera-video');
+            const canvas = document.getElementById('camera-canvas');
+
+            if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
+                canvas.width  = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const qrCode = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+
+                if (qrCode && qrCode.data) {
+                    qrSudahTerbaca = true;
+                    qrDitemukan(qrCode.data);
+                    return; 
+                }
+            }
+            animFrameId = requestAnimationFrame(loopScanQR);
+        }
+
+        async function qrDitemukan(data) {
+            const scanArea = document.getElementById('scan-area');
+            const overlay  = document.createElement('div');
+            overlay.className = 'qr-success-overlay';
+            overlay.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>`;
+            scanArea.appendChild(overlay);
+            setTimeout(() => overlay.remove(), 800);
+
+            aturStatusKamera('berhasil');
+            setTimeout(() => matikanKamera(), 500);
+
+            sessionStorage.setItem('qr_scan_data', data);
+
+            const userData = JSON.parse(localStorage.getItem('user'));
+            if (userData) {
+                const tiketAktif = await cekTiketAktifPlat(data, userData.id);
+                if (tiketAktif) {
+                    const slotInfo = tiketAktif.no_slot
+                        ? `Slot: ${tiketAktif.lantai}, ${tiketAktif.no_slot} | Status: ${tiketAktif.status}`
+                        : `Status: ${tiketAktif.status} | Selesaikan sesi parkir yang berjalan.`;
+                    tampilkanModalTiketAktif(data, slotInfo);
+                    qrSudahTerbaca = false;
+                    return;
+                }
+            }
+
+            document.getElementById('info-tiket-id-scan').textContent = `Kode QR: ${data}`;
+            document.getElementById('info-tiket-scan').classList.remove('hidden');
+            document.getElementById('info-tiket-scan').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function aturStatusKamera(status) {
+            const el = document.getElementById('scan-status-text');
+            const statusMap = {
+                'memuat'   : { text: '⏳ Memuat kamera...', color: 'text-yellow-300' },
+                'aktif'    : { text: '🟢 Kamera aktif — scan QR', color: 'text-green-300' },
+                'berhasil' : { text: '✅ QR terbaca!', color: 'text-green-300' },
+                'error'    : { text: '❌ Kamera gagal', color: 'text-red-400' },
+                'mati'     : { text: '', color: '' }
+            };
+            const s = statusMap[status] || { text: '', color: '' };
+            el.textContent  = s.text;
+            el.className    = `text-[9px] font-semibold bg-black bg-opacity-50 px-2 py-0.5 rounded-full ${s.color}`;
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && kameraAktif) matikanKamera();
+        });
+
+        // ============================================================
+        // TAB SWITCHER
+        // ============================================================
+        function gantiTab(tab) {
+            const panelScan   = document.getElementById('panel-scan');
+            const panelManual = document.getElementById('panel-manual');
+            const tabScan     = document.getElementById('tab-scan');
+            const tabManual   = document.getElementById('tab-manual');
+
+            if (tab === 'scan') {
+                panelScan.classList.remove('hidden');
+                panelScan.classList.add('flex');
+                panelManual.classList.add('hidden');
+                panelManual.classList.remove('flex');
+                tabScan.className   = 'tab-active flex-1 h-[36px] rounded-[10px] font-semibold text-[12px] transition-all shadow-sm';
+                tabManual.className = 'tab-inactive flex-1 h-[36px] rounded-[10px] font-semibold text-[12px] transition-all shadow-sm';
+            } else {
+                if (kameraAktif) matikanKamera();
+                panelManual.classList.remove('hidden');
+                panelManual.classList.add('flex');
+                panelScan.classList.add('hidden');
+                panelScan.classList.remove('flex');
+                tabManual.className = 'tab-active flex-1 h-[36px] rounded-[10px] font-semibold text-[12px] transition-all shadow-sm';
+                tabScan.className   = 'tab-inactive flex-1 h-[36px] rounded-[10px] font-semibold text-[12px] transition-all shadow-sm';
+            }
+        }
+
+        // ============================================================
+        // MODAL SIMULASI SCAN & PROSES SCAN
+        // ============================================================
+        function bukaInputSimulasi() {
+            if (!dalamJamOperasional()) { tampilkanModalJamOp(); return; }
+            const modal        = document.getElementById('modalSimulasi');
+            const modalContent = document.getElementById('modalSimulasiContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+                document.getElementById('input-kode-simulasi').focus();
+            }, 10);
+        }
+
+        function tutupModalSimulasi() {
+            const modal        = document.getElementById('modalSimulasi');
+            const modalContent = document.getElementById('modalSimulasiContent');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        function cekLogin() {
+            const userData = JSON.parse(localStorage.getItem('user'));
+            if (!userData) {
+                tampilkanAlert('error', 'Belum Login', 'Anda harus login terlebih dahulu.');
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // PROSES SIMULASI SCAN (TERHUBUNG KE DATABASE)
+        // ============================================================
+        async function prosesSimulasiScan() {
+            tutupModalSimulasi();
+            if (!dalamJamOperasional()) { tampilkanModalJamOp(); return; }
+            if (!cekLogin()) return;
+
+            const inputVal = document.getElementById('input-kode-simulasi').value.trim().toUpperCase();
+
+            if (!inputVal) {
+                sessionStorage.setItem('scan_source', 'scan');
+                localStorage.removeItem('booking_vehicle');
+                localStorage.removeItem('booking_lantai');
+                localStorage.removeItem('booking_slot');
+                window.location.href = 'booking-pilih-kendaraan.html?source=scan';
+                return;
+            }
+
+            const userData = JSON.parse(localStorage.getItem('user'));
+
+            try {
+                // HUBUNGKAN KE DATABASE
+                const responseDb = await fetch(`http://localhost:3000/api/parkir/reservasi/user/${userData.id}`);
+                const resultDb   = await responseDb.json();
+
+                if (responseDb.ok && resultDb.status === 'success') {
+                    const activeTickets = resultDb.data.filter(t => t.status === 'Aktif' || t.status === 'Menunggu');
+
+                    // Skenario 1: Input Format Tiket (TKT...)
+                    if (inputVal.startsWith('TKT')) {
+                        const matchTicket = activeTickets.find(t => t.kode_unik.toUpperCase() === inputVal);
+                        
+                        if (matchTicket) {
+                            // [LOGIKA BARU]: Pengecekan apakah sudah pernah check-in (simulasi masuk)
+                            if (matchTicket.waktu_check_in !== null) {
+                                // Tiket ini sudah digunakan (waktu_check_in sudah terisi di DB)
+                                tampilkanAlert('warning', 'Sudah Digunakan', `Tiket ${matchTicket.kode_unik} sudah melakukan Check-In sebelumnya. Silakan menuju halaman pembayaran saat keluar.`);
+                            } else {
+                                // Tiket belum digunakan -> Lakukan bypass masuk (Check-in)
+                                const resBypass = await fetch('http://localhost:3000/api/parkir/bypass-masuk', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ kode_unik: matchTicket.kode_unik, menit_parkir: 0 }) 
+                                });
+
+                                if(resBypass.ok) {
+                                    tampilkanAlert('success', 'Akses Diberikan!', `Palang gerbang terbuka untuk tiket ${matchTicket.kode_unik}.`, `tiket-pembayaran.html?id=${matchTicket.kode_unik}`);
+                                } else {
+                                    tampilkanAlert('error', 'Ditolak', 'Tiket tidak valid atau sudah kedaluwarsa.');
+                                }
+                            }
+                        } else {
+                            tampilkanAlert('error', 'Tidak Ditemukan', 'ID Tiket tidak ditemukan dalam data parkir aktif Anda.');
+                        }
+                        return;
+                    }
+
+                    // Skenario 2: Input Plat Nomor
+                    const cleanInput = inputVal.replace(/\s/g, ''); 
+                    const matchPlat  = activeTickets.find(t => (t.plat || '').replace(/\s/g, '').toUpperCase() === cleanInput);
+
+                    if (matchPlat) {
+                        const slotInfo = matchPlat.no_slot
+                            ? `Slot: ${matchPlat.lantai}, ${matchPlat.no_slot} | Status: ${matchPlat.status}`
+                            : `Status: ${matchPlat.status} | Selesaikan sesi parkir yang berjalan.`;
+                        
+                        tampilkanModalTiketAktif(matchPlat.plat, slotInfo);
+                    } else {
+                        // Bypass ke pilih slot
+                        try {
+                            const resKendaraan = await fetch(`http://localhost:3000/api/kendaraan/${userData.id}`);
+                            const resultKendaraan = await resKendaraan.json();
+
+                            if (resultKendaraan.status === 'success' && resultKendaraan.data && resultKendaraan.data.length > 0) {
+                                const kendaraan = resultKendaraan.data.find(k => k.plat.toUpperCase().replace(/\s/g, '') === cleanInput);
+
+                                if (kendaraan) {
+                                    const vehicleName = `${kendaraan.merek} ${kendaraan.model}`;
+                                    const jenis = kendaraan.jenis ? kendaraan.jenis.toLowerCase() : 'mobil';
+
+                                    localStorage.setItem('booking_vehicle', JSON.stringify({
+                                        id: kendaraan.id, name: vehicleName, plate: kendaraan.plat, jenis: jenis
+                                    }));
+                                    
+                                    sessionStorage.setItem('scan_source', 'scan');
+                                    localStorage.removeItem('booking_lantai');
+                                    localStorage.removeItem('booking_slot');
+
+                                    if (jenis === 'mobil') {
+                                        window.location.href = 'pilih-slot-mobil.html?source=scan';
+                                    } else {
+                                        window.location.href = 'pilih-slot-motor.html?source=scan';
+                                    }
+                                } else {
+                                    tampilkanAlert('error', 'Tidak Ditemukan', `Kendaraan dengan plat "${inputVal}" tidak terdaftar di akun Anda.`);
+                                }
+                            } else {
+                                tampilkanAlert('error', 'Tidak Ada Kendaraan', 'Anda belum mendaftarkan kendaraan. Tambahkan kendaraan di menu Profil.');
+                            }
+                        } catch (err) {
+                            tampilkanAlert('error', 'Koneksi Gagal', 'Gagal memuat data kendaraan dari server.');
+                        }
+                    }
+                } else {
+                    tampilkanAlert('error', 'Gagal', 'Gagal memuat data dari database.');
+                }
+            } catch (err) {
+                tampilkanAlert('error', 'Koneksi Gagal', 'Pastikan Backend server Anda menyala agar dapat terhubung ke Database.');
+            }
+        }
+
+        function lanjutKePilihKendaraanScan() {
+            if (!dalamJamOperasional()) { tampilkanModalJamOp(); return; }
+            if (!cekLogin()) return;
+            sessionStorage.setItem('scan_source', 'scan');
+            localStorage.removeItem('booking_vehicle');
+            localStorage.removeItem('booking_lantai');
+            localStorage.removeItem('booking_slot');
+            window.location.href = 'booking-pilih-kendaraan.html?source=scan';
+        }
+
+        // ============================================================
+        // INPUT MANUAL — cari kendaraan berdasarkan nomor plat
+        // ============================================================
+        async function cariTiketManual() {
+            const plat = document.getElementById('input-kode-manual').value.trim().toUpperCase();
+
+            if (!plat) {
+                tampilkanAlert('error', 'Input Kosong', 'Masukkan nomor plat kendaraan terlebih dahulu.');
+                return;
+            }
+
+            if (!dalamJamOperasional()) {
+                tampilkanModalJamOp();
+                return;
+            }
+
+            if (!cekLogin()) return;
+
+            const userData = JSON.parse(localStorage.getItem('user'));
+
+            document.getElementById('info-tiket-manual').classList.add('hidden');
+            document.getElementById('btn-lanjut-manual').classList.add('hidden');
+            document.getElementById('btn-lanjut-manual').classList.remove('flex');
+
+            try {
+                const resKendaraan = await fetch(`http://localhost:3000/api/kendaraan/${userData.id}`);
+                const resultKendaraan = await resKendaraan.json();
+
+                if (!resultKendaraan.status === 'success' || !resultKendaraan.data || resultKendaraan.data.length === 0) {
+                    tampilkanAlert('error', 'Tidak Ada Kendaraan', 'Anda belum mendaftarkan kendaraan. Tambahkan kendaraan di menu Profil.');
+                    return;
+                }
+
+                const platBersih   = plat.replace(/\s/g, '');
+                const kendaraan    = (resultKendaraan.data || []).find(k =>
+                    k.plat.toUpperCase().replace(/\s/g, '') === platBersih
+                );
+
+                if (!kendaraan) {
+                    tampilkanAlert('error', 'Tidak Ditemukan', `Kendaraan dengan plat "${plat}" tidak terdaftar di akun Anda.`);
+                    return;
+                }
+
+                const tiketAktif = await cekTiketAktifPlat(plat, userData.id);
+                if (tiketAktif) {
+                    const slotInfo = tiketAktif.no_slot
+                        ? `Slot: ${tiketAktif.lantai}, ${tiketAktif.no_slot} | Status: ${tiketAktif.status}`
+                        : `Status: ${tiketAktif.status} | Selesaikan sesi parkir yang berjalan.`;
+                    tampilkanModalTiketAktif(kendaraan.plat, slotInfo);
+                    return;
+                }
+
+                const vehicleName = `${kendaraan.merek} ${kendaraan.model}`;
+                let jenis = kendaraan.jenis ? kendaraan.jenis.toLowerCase() : 'mobil';
+
+                document.getElementById('info-tiket-id-manual').textContent   = `${vehicleName} — ${kendaraan.plat}`;
+                document.getElementById('info-tiket-slot-manual').textContent = `Jenis: ${jenis.charAt(0).toUpperCase() + jenis.slice(1)} | Warna: ${kendaraan.warna}`;
+                document.getElementById('info-tiket-manual').classList.remove('hidden');
+
+                localStorage.setItem('booking_vehicle', JSON.stringify({
+                    id: kendaraan.id,
+                    name: vehicleName,
+                    plate: kendaraan.plat,
+                    jenis: jenis
+                }));
+
+                const btnLanjut = document.getElementById('btn-lanjut-manual');
+                btnLanjut.classList.remove('hidden');
+                btnLanjut.classList.add('flex');
+
+            } catch (err) {
+                tampilkanAlert('error', 'Error Server', 'Tidak dapat terhubung ke server. Pastikan backend aktif.');
+            }
+        }
+
+        function lanjutKePilihSlotManual() {
+            const vehicle = JSON.parse(localStorage.getItem('booking_vehicle'));
+            if (!vehicle) return;
+
+            sessionStorage.setItem('scan_source', 'scan');
+            localStorage.removeItem('booking_lantai');
+            localStorage.removeItem('booking_slot');
+
+            if (vehicle.jenis === 'mobil') {
+                window.location.href = 'pilih-slot-mobil.html?source=scan';
+            } else {
+                window.location.href = 'pilih-slot-motor.html?source=scan';
+            }
+        }
+
+        // ============================================================
+        // MODAL CUSTOM (ERROR / INFO / WARNING)
+        // ============================================================
+        function tampilkanAlert(type, title, message, redirectUrl = null) {
+            modalRedirectUrl = redirectUrl;
+            document.getElementById('modalTitle').textContent   = title;
+            document.getElementById('modalMessage').textContent = message;
+
+            if (type === 'success') {
+                document.getElementById('modalIconSuccess').style.display = 'flex';
+                document.getElementById('modalIconWarning').style.display = 'none';
+                document.getElementById('modalIconError').style.display   = 'none';
+            } else if (type === 'warning') {
+                document.getElementById('modalIconSuccess').style.display = 'none';
+                document.getElementById('modalIconWarning').style.display = 'flex';
+                document.getElementById('modalIconError').style.display   = 'none';
+            } else {
+                document.getElementById('modalIconSuccess').style.display = 'none';
+                document.getElementById('modalIconWarning').style.display = 'none';
+                document.getElementById('modalIconError').style.display   = 'flex';
+            }
+
+            const modal        = document.getElementById('customModal');
+            const modalContent = document.getElementById('customModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupCustomModal() {
+            const modal        = document.getElementById('customModal');
+            const modalContent = document.getElementById('customModalContent');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        // ============================================================
+        // EVENT LISTENER
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!dalamJamOperasional()) {
+                tampilkanModalJamOp();
+            }
+
+            document.getElementById('input-kode-manual').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') cariTiketManual();
+            });
+            document.getElementById('input-kode-simulasi').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') prosesSimulasiScan();
+            });
+
+            window.addEventListener('pagehide', () => {
+                if (kameraAktif) matikanKamera();
+            });
+
+            gantiTab('scan');
+        });
+    </script>
+</body>
+</html>

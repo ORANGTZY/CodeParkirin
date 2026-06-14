@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+    
+    <title>Parkirin - Statistik Pengguna</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F5F5F5] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="w-full h-[100px] pt-12 px-6 flex items-center justify-between shrink-0 bg-[#F5F5F5]">
+            <div class="flex items-center">
+                <a href="profil.html" class="flex items-center text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <span class="ml-2 font-bold text-[20px] text-[#0064F0]">Statistik Pengguna</span>
+            </div>
+            <button class="text-[#0064F0] active:scale-95 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar flex flex-col pt-2 pb-10 px-6 gap-6 relative">
+            
+            <div class="w-full bg-[#0062E6] rounded-[10px] p-5 relative overflow-hidden shadow-md">
+                <div class="relative z-10 text-white">
+                    <p class="font-semibold text-[14px] mb-2 opacity-90">Total Pengeluaran Bulanan</p>
+                    <h2 id="total-pengeluaran" class="font-bold text-[32px] leading-tight mb-6">Rp 0</h2>
+                    
+                    <div class="flex items-center gap-1.5 opacity-90">
+                        <svg id="trend-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        <p id="trend-text" class="font-normal text-[11px]">Menghitung data...</p>
+                    </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="absolute -right-4 -bottom-4 w-32 h-32 text-white opacity-20" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zm0 2v8h16V8H4zm4 4a4 4 0 118 0 4 4 0 01-8 0zm2 0a2 2 0 104 0 2 2 0 00-4 0z" />
+                </svg>
+            </div>
+
+            <div class="flex gap-4 w-full h-[130px]">
+                <div class="flex-1 bg-[#D9D9D9] rounded-[10px] p-4 flex flex-col justify-between shadow-sm">
+                    <div class="w-8 h-8 bg-[#00D1FF] rounded-full flex items-center justify-center text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-normal text-[12px] text-gray-600 mb-1">Rata-rata Durasi</p>
+                        <p class="font-bold text-[22px] text-black leading-none flex items-baseline gap-1">
+                            <span id="rata-durasi">00:00</span>
+                            <span id="label-durasi" class="text-[10px] font-semibold text-gray-500">Jam / Minggu</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex-1 bg-[#D9D9D9] rounded-[10px] p-4 flex flex-col justify-between shadow-sm">
+                    <div class="w-8 h-8 bg-[#00D1FF] rounded-full flex items-center justify-center text-white font-bold text-lg">P</div>
+                    <div>
+                        <p class="font-normal text-[12px] text-gray-600 mb-1">Total Sesi Parkir</p>
+                        <p class="font-bold text-[22px] text-black leading-none flex items-baseline gap-1">
+                            <span id="total-sesi">0</span> 
+                            <span class="text-[14px] font-semibold">Sesi</span>
+                            <span id="label-sesi" class="text-[10px] font-semibold text-gray-500">/ Minggu</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-white rounded-[10px] p-5 shadow-sm relative mt-2">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-bold text-[14px] text-black">Frekuensi Parkir</h3>
+                    
+                    <div class="relative inline-block">
+                        <select id="filter-grafik" onchange="updateGrafik()" class="bg-[#EAF2FF] text-[#0062E6] font-semibold text-[10px] pl-3 pr-6 py-1.5 rounded-[30px] appearance-none outline-none cursor-pointer focus:ring-2 focus:ring-[#0062E6] transition-all">
+                            <option value="minggu">MINGGU INI</option>
+                            <option value="bulan">BULAN INI</option>
+                        </select>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 absolute right-2.5 top-1/2 -translate-y-1/2 text-[#0062E6] pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div id="chart-bars" class="flex items-end justify-between h-[120px] border-b border-black pb-1 px-1">
+                    </div>
+
+                <div id="chart-labels" class="flex justify-between text-[11px] font-semibold text-black mt-2 px-1">
+                    </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const userData = JSON.parse(localStorage.getItem('user'));
+        let dataTiketValidGlobal = []; 
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (!userData) {
+                alert("Anda belum login.");
+                window.location.href = 'login.html';
+                return;
+            }
+            fetchStatistik();
+        });
+
+        async function fetchStatistik() {
+            try {
+                const response = await fetch(`http://localhost:3000/api/parkir/reservasi/user/${userData.id}`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    dataTiketValidGlobal = result.data.filter(r => r.status !== 'Dibatalkan');
+                    
+                    kalkulasiInfoUtama(); // Tetap menghitung total uang bulanan
+                    updateGrafik();       // Update Sesi, Durasi, Label dan Grafik berdasar filter
+                }
+            } catch (err) {
+                console.error("Gagal menarik data:", err);
+            }
+        }
+
+        // FUNGSI KHUSUS PENGELUARAN BULANAN
+        function kalkulasiInfoUtama() {
+            const sekarang = new Date();
+            const bulanIni = sekarang.getMonth();
+            const tahunIni = sekarang.getFullYear();
+            
+            let totalPengeluaranBulanIni = 0;
+            let totalPengeluaranBulanLalu = 0;
+
+            dataTiketValidGlobal.forEach(tiket => {
+                if (tiket.status === 'Selesai') {
+                    const tgl = new Date(tiket.waktu_pesan);
+                    
+                    if (tgl.getFullYear() === tahunIni && tgl.getMonth() === bulanIni) {
+                        totalPengeluaranBulanIni += (tiket.total_tarif || 0);
+                    } else if (
+                        (bulanIni === 0 && tgl.getFullYear() === tahunIni - 1 && tgl.getMonth() === 11) ||
+                        (tgl.getFullYear() === tahunIni && tgl.getMonth() === bulanIni - 1)
+                    ) {
+                        totalPengeluaranBulanLalu += (tiket.total_tarif || 0);
+                    }
+                }
+            });
+
+            document.getElementById('total-pengeluaran').textContent = `Rp ${totalPengeluaranBulanIni.toLocaleString('id-ID')}`;
+            
+            const trendText = document.getElementById('trend-text');
+            const trendIcon = document.getElementById('trend-icon');
+            
+            if (totalPengeluaranBulanLalu === 0) {
+                trendText.textContent = "Belum ada data bulan lalu.";
+                trendIcon.style.display = "none";
+            } else {
+                trendIcon.style.display = "block";
+                let persentase = ((totalPengeluaranBulanIni - totalPengeluaranBulanLalu) / totalPengeluaranBulanLalu) * 100;
+                
+                if (persentase > 0) {
+                    trendText.textContent = `${Math.round(persentase)}% lebih tinggi dari bulan lalu`;
+                    trendIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />`;
+                } else {
+                    trendText.textContent = `${Math.round(Math.abs(persentase))}% lebih hemat dari bulan lalu`;
+                    trendIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />`;
+                }
+            }
+        }
+
+        // ==========================================
+        // FUNGSI UPDATE GRAFIK & INFORMASI SESI / DURASI
+        // ==========================================
+        function updateGrafik() {
+            const filter = document.getElementById('filter-grafik').value;
+            const sekarang = new Date();
+            const bulanIni = sekarang.getMonth();
+            const tahunIni = sekarang.getFullYear();
+            
+            let dataFrekuensi = [];
+            let labelGrafik = [];
+
+            // Variabel Hitung Dinamis
+            let totalSesiPeriode = 0;
+            let totalDurasiPeriode = 0;
+            let tiketSelesaiPeriode = 0;
+
+            if (filter === 'minggu') {
+                dataFrekuensi = [0, 0, 0, 0, 0, 0, 0];
+                labelGrafik = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+                
+                const seninMingguIni = getSeninMingguIni(sekarang);
+
+                dataTiketValidGlobal.forEach(tiket => {
+                    const tgl = new Date(tiket.waktu_pesan);
+                    if (tgl >= seninMingguIni) {
+                        let dayIndex = tgl.getDay(); 
+                        let targetIndex = dayIndex === 0 ? 6 : dayIndex - 1; 
+                        dataFrekuensi[targetIndex]++;
+                        
+                        totalSesiPeriode++;
+                        if(tiket.status === 'Selesai') {
+                            totalDurasiPeriode += (tiket.total_durasi || 0);
+                            tiketSelesaiPeriode++;
+                        }
+                    }
+                });
+
+                // Update Label untuk Minggu Ini
+                document.getElementById('label-sesi').textContent = "/ Minggu";
+                document.getElementById('label-durasi').textContent = "Jam / Minggu";
+
+            } else if (filter === 'bulan') {
+                dataFrekuensi = [0, 0, 0, 0];
+                labelGrafik = ['M1', 'M2', 'M3', 'M4'];
+
+                dataTiketValidGlobal.forEach(tiket => {
+                    const tgl = new Date(tiket.waktu_pesan);
+                    if (tgl.getFullYear() === tahunIni && tgl.getMonth() === bulanIni) {
+                        const tanggal = tgl.getDate();
+                        
+                        if (tanggal <= 7) dataFrekuensi[0]++;
+                        else if (tanggal <= 14) dataFrekuensi[1]++;
+                        else if (tanggal <= 21) dataFrekuensi[2]++;
+                        else dataFrekuensi[3]++; 
+
+                        totalSesiPeriode++;
+                        if(tiket.status === 'Selesai') {
+                            totalDurasiPeriode += (tiket.total_durasi || 0);
+                            tiketSelesaiPeriode++;
+                        }
+                    }
+                });
+
+                // Update Label untuk Bulan Ini
+                document.getElementById('label-sesi').textContent = "/ Bulan";
+                document.getElementById('label-durasi').textContent = "Jam / Bulan";
+            }
+
+            // Terapkan Total Sesi secara dinamis ke Layar
+            document.getElementById('total-sesi').textContent = totalSesiPeriode;
+
+            // Terapkan Rata-rata Durasi secara dinamis ke Layar
+            if (tiketSelesaiPeriode > 0) {
+                const avgMenit = Math.round(totalDurasiPeriode / tiketSelesaiPeriode);
+                const jam = Math.floor(avgMenit / 60);
+                const menit = avgMenit % 60;
+                document.getElementById('rata-durasi').textContent = `${jam.toString().padStart(2, '0')}:${menit.toString().padStart(2, '0')}`;
+            } else {
+                document.getElementById('rata-durasi').textContent = `00:00`;
+            }
+
+            renderGrafikHTML(dataFrekuensi, labelGrafik);
+        }
+
+        function renderGrafikHTML(dataFrekuensi, labelGrafik) {
+            const chartContainer = document.getElementById('chart-bars');
+            const labelContainer = document.getElementById('chart-labels');
+            
+            chartContainer.innerHTML = ''; 
+            labelContainer.innerHTML = '';
+            
+            const maxVal = Math.max(...dataFrekuensi, 4); 
+            
+            dataFrekuensi.forEach(nilai => {
+                const persentaseTinggi = (nilai / maxVal) * 100;
+                const tinggiFinal = nilai === 0 ? 2 : persentaseTinggi;
+
+                const barHTML = `
+                    <div class="flex flex-col justify-end items-center h-full w-[16px] group relative mx-1">
+                        <span class="absolute -top-6 bg-black text-white text-[9px] px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">${nilai}x</span>
+                        <div class="w-full bg-[#0062E6] rounded-[2px] transition-all duration-700 ease-out" style="height: 0%;" data-height="${tinggiFinal}%"></div>
+                    </div>
+                `;
+                chartContainer.innerHTML += barHTML;
+            });
+
+            labelGrafik.forEach(label => {
+                labelContainer.innerHTML += `<span class="w-[16px] text-center mx-1">${label}</span>`;
+            });
+
+            setTimeout(() => {
+                const bars = chartContainer.querySelectorAll('div > div');
+                bars.forEach(bar => {
+                    bar.style.height = bar.getAttribute('data-height');
+                });
+            }, 100);
+        }
+
+        function getSeninMingguIni(d) {
+            const date = new Date(d);
+            const day = date.getDay(); 
+            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(date.setDate(diff)).setHours(0,0,0,0);
+        }
+    </script>
+</body>
+</html>

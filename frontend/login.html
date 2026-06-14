@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1A73E8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Login</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        body {
+            background-color: #1A73E8; 
+            background-image: radial-gradient(circle at 10% 20%, rgba(172, 198, 255, 0.2) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(126, 171, 255, 0.2) 0%, transparent 40%);
+            font-family: 'Montserrat', sans-serif;
+            overscroll-behavior-y: none;
+        }
+    </style>
+</head>
+<body class="flex justify-center min-h-screen text-gray-800 antialiased">
+
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/id_ID/sdk.js"></script>
+
+    <div class="w-full max-w-[402px] flex flex-col min-h-screen relative px-4 py-8">
+        
+        <div class="flex justify-center items-center mb-10 mt-8">
+            <img src="./assets/img/LOGO.png" alt="Logo Parkirin" class="h-10 object-contain drop-shadow-md">
+        </div>
+
+        <div class="bg-[#FFFFFF] rounded-[10px] p-5 shadow-lg mb-5 w-full relative z-10">
+            <h2 class="text-[20px] font-bold text-[#475569] text-center mb-6 mt-2">Selamat Datang</h2>
+
+            <form id="loginForm" class="space-y-4" novalidate>
+                
+                <div class="flex flex-col text-left">
+                    <label class="text-[10px] font-bold text-[#475569] mb-1 ml-1">Nomor Telepon Aktif</label>
+                    <input type="tel" id="no_telepon" placeholder="Contoh: 08123456789" required
+                        class="w-full bg-[#F6F6F6] rounded-[5px] h-[48px] px-4 text-[12px] font-medium text-black placeholder-black/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all">
+                </div>
+
+                <div class="flex flex-col text-left">
+                    <label class="text-[10px] font-bold text-[#475569] mb-1 ml-1">Alamat Email</label>
+                    <input type="email" id="email" placeholder="contoh@email.com" required
+                        class="w-full bg-[#F6F6F6] rounded-[5px] h-[48px] px-4 text-[12px] font-medium text-black placeholder-black/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all">
+                </div>
+
+                <div class="flex flex-col text-left">
+                    <label class="text-[10px] font-bold text-[#475569] mb-1 ml-1">Kata Sandi</label>
+                    <div class="relative w-full">
+                        <input type="password" id="password" placeholder="Masukkan Kata Sandi" required
+                            class="w-full bg-[#F6F6F6] rounded-[5px] h-[48px] px-4 text-[12px] font-medium text-black placeholder-black/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all">
+                        <button type="button" onclick="togglePassword('password', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-cyan-400 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-right">
+                    <a href="forgot-password.html" class="text-[10px] text-gray-500 hover:text-cyan-500 font-medium">Lupa Kata Sandi?</a>
+                </div>
+
+                <button type="button" onclick="validateAndSubmit()"
+                    class="w-full bg-[#89E7F9] hover:bg-cyan-400 text-[#F5F5F5] font-bold text-[13px] h-[47px] rounded-[10px] mt-2 shadow-sm transition-all active:scale-95">
+                    LOGIN
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-[#FFFFFF] rounded-[10px] p-5 shadow-lg w-full flex flex-col items-center justify-center h-[150px] relative z-10">
+            <p class="text-[11px] font-bold text-[#8A8A8A] mb-4">ATAU LOGIN MENGGUNAKAN</p>
+            <div class="flex gap-6 mb-4">
+                <button type="button" onclick="loginWithFacebook()" class="w-[50px] h-[50px] rounded-full shadow-md hover:opacity-90 active:scale-95 transition-all overflow-hidden flex items-center justify-center border border-gray-100 bg-white">
+                    <img src="./assets/img/iconfacebook.png" alt="Login Facebook" class="w-full h-full object-cover">
+                </button>
+                <button type="button" onclick="loginWithGoogle()" class="w-[50px] h-[50px] rounded-full shadow-md hover:opacity-90 active:scale-95 transition-all overflow-hidden flex items-center justify-center border border-gray-100 bg-white p-1">
+                    <img src="./assets/img/icongoogle.png" alt="Login Google" class="w-full h-full object-contain">
+                </button>
+            </div>
+            <div class="relative w-full text-center mt-2">
+                <span class="text-[11px] text-gray-500">Belum punya akun? </span>
+                <a href="register.html" class="text-[11px] text-[#42BEE2] font-bold hover:underline">Daftar Sekarang</a>
+            </div>
+        </div>
+
+        <div id="loginModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="loginModalContent" class="bg-white w-[300px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div id="modalIconContainer" class="w-14 h-14 rounded-full flex items-center justify-center mb-4"></div>
+                <h3 id="modalTitle" class="text-[18px] font-bold text-black mb-2 text-center"></h3>
+                <p id="modalMessage" class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed"></p>
+                <button id="modalBtn" class="w-full text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95"></button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // INISIALISASI OAUTH FACEBOOK & GOOGLE
+        let googleClient;
+
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : 'GANTI_DENGAN_FACEBOOK_APP_ID_ANDA',
+                cookie     : true,
+                xfbml      : true,
+                version    : 'v19.0'
+            });
+        };
+
+        // FUNGSI GOOGLE LOGIN DENGAN INTEGRASI DATABASE BACKEND & STATUS LINK
+        window.onload = function() {
+            if(window.google) {
+                googleClient = google.accounts.oauth2.initTokenClient({
+                    client_id: '1066988253902-54g8l817f47lb50ns948flbk2aakfk9m.apps.googleusercontent.com',
+                    scope: 'email profile openid',
+                    callback: async (response) => {
+                        if (response && response.access_token) {
+                            try {
+                                document.getElementById('modalBtn').textContent = "Memproses Data...";
+
+                                // 1. Tarik Data Profil dari Google
+                                const resInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                    headers: { Authorization: `Bearer ${response.access_token}` }
+                                });
+                                const userInfo = await resInfo.json();
+
+                                // 2. KIRIM DATA KE BACKEND UNTUK DISIMPAN KE DATABASE MYSQL
+                                const backendRes = await fetch('http://localhost:3000/api/oauth', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        nama: userInfo.name,
+                                        email: userInfo.email,
+                                        provider: 'google',
+                                        provider_id: userInfo.sub,
+                                        picture: userInfo.picture
+                                    })
+                                });
+
+                                const result = await backendRes.json();
+
+                                // 3. Jika Backend sukses menyimpan/menemukan data
+                                if (backendRes.ok) {
+                                    
+                                    // Berikan tanda bahwa akun ini tertaut dengan Google
+                                    result.user.isGoogleLinked = true; 
+
+                                    // Simpan balasan resmi dari Database ke LocalStorage
+                                    localStorage.setItem('user', JSON.stringify(result.user));
+                                    
+                                    // Simpan Foto Profil Google
+                                    if(userInfo.picture) {
+                                        localStorage.setItem('foto_profil_' + result.user.id, userInfo.picture);
+                                    }
+
+                                    showModal(true, 'Login Google Berhasil!', `Selamat datang, ${result.user.nama}!`, 'user-dashboard.html');
+                                } else {
+                                    showModal(false, 'Gagal Sinkronisasi', result.message || 'Gagal menyimpan akun ke database.');
+                                }
+
+                            } catch (err) {
+                                showModal(false, 'Kesalahan Jaringan', 'Gagal memuat profil atau server database sedang mati.');
+                            }
+                        }
+                    },
+                });
+            }
+        };
+
+        // FUNGSI FACEBOOK LOGIN DENGAN INTEGRASI DATABASE BACKEND & STATUS LINK
+        function loginWithFacebook() {
+            if(typeof FB === 'undefined') {
+                showModal(false, 'Gagal', 'SDK Facebook sedang memuat. Periksa internet Anda dan coba lagi.'); return;
+            }
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    // 1. Tarik Data Profil dari Facebook
+                    FB.api('/me', {fields: 'name,email,picture.type(large)'}, async function(res) {
+                        
+                        try {
+                            const pictureUrl = (res.picture && res.picture.data && res.picture.data.url) ? res.picture.data.url : '';
+
+                            // 2. KIRIM DATA KE BACKEND UNTUK DISIMPAN KE DATABASE MYSQL
+                            const backendRes = await fetch('http://localhost:3000/api/oauth', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    nama: res.name,
+                                    email: res.email || `${res.id}@facebook.com`, // Fallback jika email diprivasi
+                                    provider: 'facebook',
+                                    provider_id: res.id,
+                                    picture: pictureUrl
+                                })
+                            });
+
+                            const result = await backendRes.json();
+
+                            if (backendRes.ok) {
+
+                                // Berikan tanda bahwa akun ini tertaut dengan Facebook
+                                result.user.isFbLinked = true;
+
+                                localStorage.setItem('user', JSON.stringify(result.user));
+                                
+                                if(pictureUrl) {
+                                    localStorage.setItem('foto_profil_' + result.user.id, pictureUrl);
+                                }
+
+                                showModal(true, 'Login Facebook Berhasil!', `Selamat datang, ${result.user.nama}!`, 'user-dashboard.html');
+                            } else {
+                                showModal(false, 'Gagal Sinkronisasi', result.message || 'Gagal menyimpan akun ke database.');
+                            }
+                        } catch (err) {
+                            showModal(false, 'Kesalahan Jaringan', 'Tidak dapat terhubung ke server database.');
+                        }
+                    });
+                } else {
+                    console.log('Login Facebook dibatalkan pengguna.');
+                }
+            }, {scope: 'public_profile,email'});
+        }
+
+        function loginWithGoogle() {
+            if(googleClient) {
+                googleClient.requestAccessToken();
+            } else {
+                showModal(false, 'Gagal', 'SDK Google gagal dimuat. Periksa koneksi internet Anda.');
+            }
+        }
+
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>`;
+            } else {
+                input.type = 'password';
+                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`;
+            }
+        }
+
+        function showModal(isSuccess, title, message, redirectUrl = null) {
+            const modal = document.getElementById('loginModal');
+            const modalContent = document.getElementById('loginModalContent');
+            const iconContainer = document.getElementById('modalIconContainer');
+            const btn = document.getElementById('modalBtn');
+            
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+
+            if(isSuccess) {
+                iconContainer.className = "w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-4";
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>`;
+                btn.className = "w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95";
+                btn.textContent = "Masuk ke Dashboard";
+                btn.onclick = () => { window.location.href = redirectUrl; };
+            } else {
+                iconContainer.className = "w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4";
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#E53935]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
+                btn.className = "w-full bg-[#E53935] hover:bg-red-700 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95";
+                btn.textContent = "Perbaiki Data";
+                btn.onclick = () => {
+                    modal.classList.remove('opacity-100');
+                    modal.classList.add('opacity-0');
+                    modalContent.classList.remove('scale-100');
+                    modalContent.classList.add('scale-90');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    }, 300);
+                };
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        async function validateAndSubmit() {
+            const no_telepon = document.getElementById('no_telepon');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+
+            no_telepon.classList.remove('ring-2', 'ring-red-500');
+            email.classList.remove('ring-2', 'ring-red-500');
+            password.classList.remove('ring-2', 'ring-red-500');
+
+            if (!no_telepon.value.trim() || !email.value.trim() || !password.value.trim()) {
+                if(!no_telepon.value.trim()) no_telepon.classList.add('ring-2', 'ring-red-500');
+                if(!email.value.trim()) email.classList.add('ring-2', 'ring-red-500');
+                if(!password.value.trim()) password.classList.add('ring-2', 'ring-red-500');
+                
+                showModal(false, 'Data Tidak Lengkap', 'Peringatan: Form tidak boleh kosong. Harap isi seluruh kolom yang tersedia sebelum login.');
+                return; 
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        no_telepon: no_telepon.value, 
+                        email: email.value, 
+                        password: password.value 
+                    }) 
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    showModal(true, 'Login Berhasil!', `Selamat datang kembali, ${result.user.nama}!`, 'user-dashboard.html');
+                } else {
+                    showModal(false, 'Login Gagal', result.message);
+                }
+            } catch (error) {
+                showModal(false, 'Kesalahan Jaringan', 'Terjadi kesalahan saat menghubungi server. Pastikan server Backend aktif.');
+            }
+        }
+    </script>
+</body>
+</html>

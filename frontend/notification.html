@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+    <title>Parkirin - Notifikasi</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; overscroll-behavior-y: none;}
+        .slide-in-right { animation: slideIn 0.3s ease-out forwards; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .fade-content { animation: fadeEffect 0.3s ease-in-out; }
+        @keyframes fadeEffect { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F5F5F5] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="w-full h-[120px] bg-[#F5F5F5] flex items-center px-4 pt-12 pb-4 relative z-10 shrink-0 border-b border-gray-200">
+            <a href="user-dashboard.html" class="text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h1 class="text-[20px] font-bold text-[#0064F0]">Notifikasi</h1>
+        </div>
+
+        <div class="w-full flex bg-[#F5F5F5] relative z-10 shadow-sm shrink-0">
+            <div onclick="switchTab('transaksi')" class="w-1/2 flex flex-col items-center justify-center pt-4 cursor-pointer">
+                <span id="txt-transaksi" class="text-[12px] font-semibold text-[#0068E6] mb-3">Transaksi</span>
+                <div id="line-transaksi" class="w-full h-[2px] bg-[#0068E6] transition-colors duration-300"></div> 
+            </div>
+            <div onclick="switchTab('inbox')" class="w-1/2 flex flex-col items-center justify-center pt-4 cursor-pointer">
+                <span id="txt-inbox" class="text-[12px] font-semibold text-gray-400 mb-3">Inbox</span>
+                <div id="line-inbox" class="w-full h-[2px] bg-[#A3ABC4] transition-colors duration-300"></div> 
+            </div>
+        </div>
+
+        <div class="flex-grow bg-[#F5F5F5] overflow-y-auto hide-scrollbar">
+            <div id="content-transaksi" class="block fade-content space-y-0 pb-20"></div>
+
+            <div id="content-inbox" class="hidden flex-col fade-content pb-20">
+                <div class="flex items-start gap-4 py-4 px-5 border-b border-gray-200 cursor-pointer hover:bg-gray-100">
+                    <div class="mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00D1FF" class="w-6 h-6"><path d="M13.447 4.195c-1.3-.52-2.73-.207-3.693.812L6.155 8H4a2 2 0 00-2 2v4a2 2 0 002 2h2.155l3.599 3.993c.963 1.019 2.393 1.332 3.693.812a3.001 3.001 0 001.909-2.793V6.988a3.001 3.001 0 00-1.909-2.793zM18.8 8.64a1 1 0 011.4 0 5.98 5.98 0 010 8.48 1 1 0 11-1.4-1.42 3.984 3.984 0 000-5.64 1 1 0 010-1.42z" /></svg></div>
+                    <div class="flex flex-col">
+                        <h3 class="text-[12px] font-semibold text-black mb-1">Sudah Aktifin KEMBAR Pay Kamu?</h3>
+                        <p class="text-[12px] font-normal text-black leading-snug">Jangan lewatkan Cashback 50% di setiap transaksi Kamu</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userData = JSON.parse(localStorage.getItem('user'));
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (userData) {
+                fetchNotifikasiTransaksi();
+            }
+        });
+
+        async function fetchNotifikasiTransaksi() {
+            const container = document.getElementById('content-transaksi');
+            try {
+                // Mengecek Ke Database
+                const response = await fetch(`http://localhost:3000/api/parkir/reservasi/user/${userData.id}`);
+                const result = await response.json();
+
+                if (result.status === 'success' && result.data.length > 0) {
+                    container.innerHTML = '';
+                    result.data.forEach(item => {
+                        // LOGIKA PARSING TANGGAL & WAKTU
+                        const dateObj = new Date(item.waktu_pesan);
+                        const timeStr = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                        const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                        
+                        const infoSlot = item.blok === 'Mobil' ? `Slot ${item.no_slot}` : item.no_slot;
+
+                        // Konfigurasi Tampilan Notifikasi
+                        let titleText = 'Pemesanan Tiket Berhasil';
+                        let statusColor = 'text-blue-600';
+                        let bgIconColor = 'bg-blue-100';
+                        let iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>`;
+
+                        if (item.status === 'Dibatalkan') {
+                            titleText = 'Pemesanan Dibatalkan';
+                            statusColor = 'text-red-600';
+                            bgIconColor = 'bg-red-100';
+                            iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
+                        } else if (item.status === 'Selesai') {
+                            titleText = 'Parkir Telah Selesai';
+                            statusColor = 'text-green-600';
+                            bgIconColor = 'bg-green-100';
+                            iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>`;
+                        }
+
+                        container.innerHTML += `
+                            <div class="flex items-start gap-4 py-4 px-5 border-b border-gray-200 bg-white hover:bg-gray-50 transition-colors">
+                                <div class="mt-1 flex-shrink-0 ${bgIconColor} p-2 rounded-full">
+                                    ${iconSVG}
+                                </div>
+                                <div class="flex flex-col w-full">
+                                    <h3 class="text-[12px] font-semibold text-black mb-0.5">${titleText}</h3>
+                                    <p class="text-[12px] font-normal text-gray-600 leading-snug">Tiket parkir Anda di ${item.nama_area} (${item.lantai}, ${infoSlot}) berstatus <span class="font-bold ${statusColor}">${item.status}</span>.</p>
+                                    <div class="flex w-full justify-between items-center mt-1">
+                                        <span class="text-[10px] text-gray-400 font-medium">${dateStr} • ${timeStr} WIB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = `<div class="text-center text-gray-400 mt-10 text-[12px] font-medium">Belum ada transaksi terbaru</div>`;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function switchTab(tabName) {
+            const lineTransaksi = document.getElementById('line-transaksi');
+            const lineInbox = document.getElementById('line-inbox');
+            const txtTransaksi = document.getElementById('txt-transaksi');
+            const txtInbox = document.getElementById('txt-inbox');
+            const contentTransaksi = document.getElementById('content-transaksi');
+            const contentInbox = document.getElementById('content-inbox');
+
+            if (tabName === 'inbox') {
+                lineTransaksi.classList.replace('bg-[#0068E6]', 'bg-[#A3ABC4]');
+                lineInbox.classList.replace('bg-[#A3ABC4]', 'bg-[#0068E6]');
+                txtTransaksi.classList.replace('text-[#0068E6]', 'text-gray-400');
+                txtInbox.classList.replace('text-gray-400', 'text-[#0068E6]');
+                contentTransaksi.classList.replace('block', 'hidden');
+                contentInbox.classList.replace('hidden', 'flex');
+            } else {
+                lineInbox.classList.replace('bg-[#0068E6]', 'bg-[#A3ABC4]');
+                lineTransaksi.classList.replace('bg-[#A3ABC4]', 'bg-[#0068E6]');
+                txtInbox.classList.replace('text-[#0068E6]', 'text-gray-400');
+                txtTransaksi.classList.replace('text-gray-400', 'text-[#0068E6]');
+                contentInbox.classList.replace('flex', 'hidden');
+                contentTransaksi.classList.replace('hidden', 'block');
+            }
+        }
+    </script>
+</body>
+</html>

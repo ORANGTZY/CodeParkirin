@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Lokasi Map</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- LEAFLET CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- LEAFLET JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        body {
+            background-color: #F1F1F1;
+            font-family: 'Montserrat', sans-serif;
+            overscroll-behavior-y: none;
+            margin: 0;
+        }
+
+        .slide-in-right {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .leaflet-control-attribution { display: none !important; }
+        .custom-pin-container { background: transparent; border: none; }
+        
+        /* Animasi pulsa untuk titik lokasi pengguna */
+        .user-pulse {
+            animation: pulsate 1.5s ease-out infinite;
+            border-radius: 50%;
+        }
+        @keyframes pulsate {
+            0% { box-shadow: 0 0 0 0 rgba(0, 100, 240, 0.5); }
+            100% { box-shadow: 0 0 0 15px rgba(0, 100, 240, 0); }
+        }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <!-- BAGIAN 1: HEADER -->
+        <div class="bg-[#F5F5F5] w-full pt-10 pb-4 px-4 z-40 shadow-sm flex items-center justify-between relative">
+            
+            <div class="flex items-center gap-3">
+                <a href="user-dashboard.html" class="text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                
+                <div class="flex flex-col max-w-[200px]">
+                    <span class="text-[#A3ABC4] font-bold text-[10px] leading-tight">Lokasi Kamu</span>
+                    <span id="user-address" class="text-black font-semibold text-[14px] leading-snug truncate">Mencari lokasi...</span>
+                </div>
+            </div>
+
+            <button id="btn-search" class="hover:opacity-70 active:scale-90 transition-transform p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </button>
+
+        </div>
+
+        <!-- BAGIAN 2: MAP AREA -->
+        <div class="flex-grow relative bg-gray-200 overflow-hidden z-10">
+            <div id="map" class="absolute inset-0 z-0"></div>
+
+            <!-- FLOATING INFO CARD -->
+            <a href="booking.html" class="absolute bottom-6 left-4 w-[211px] h-[48px] bg-[#F5F5F5] border border-[#00D1FF] rounded-[8px] flex items-center justify-between px-3 shadow-lg cursor-pointer hover:bg-white transition-colors z-30 block">
+                <div class="flex flex-col justify-center">
+                    <span class="text-[#0F172A] font-semibold text-[12px] leading-tight truncate w-[100px]">RITA Supermall</span>
+                    <div class="flex items-baseline mt-0.5">
+                        <!-- ID park-distance ditambahkan agar JavaScript bisa mengubah angkanya -->
+                        <span id="park-distance" class="text-[#0F172A] font-semibold text-[11px] leading-none">...</span>
+                        <span class="text-[#0F172A] font-semibold text-[7px] ml-[1px]">Km</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="flex flex-col items-center justify-center">
+                        <span id="lokasi-slots" class="text-[#00D1FF] font-bold text-[20px] leading-[18px]">...</span>
+                        <span class="text-[#00D7FF] font-semibold text-[9px] leading-tight">Tersedia</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#0F172A] ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+        </div>
+
+        <!-- BAGIAN 3: BOTTOM BAR -->
+        <a href="lokasi-list.html" class="h-[60px] w-full bg-[#0141A3] flex items-center justify-center gap-3 cursor-pointer hover:bg-blue-800 transition-colors z-40 active:scale-[0.98] relative block">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <span class="text-white font-semibold text-[13px] uppercase tracking-wide">Lihat Dalam List</span>
+        </a>
+
+    </div>
+
+    <!-- SCRIPT GEOLOCATION, PETA, & KALKULASI JARAK -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Koordinat Tujuan (Lokasi Parkir RITA Supermall)
+            const ritaLat = -7.4255;
+            const ritaLng = 109.2303;
+
+            var map = L.map('map', { zoomControl: false }).setView([ritaLat, ritaLng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+            var customIcon = L.divIcon({
+                className: 'custom-pin-container', 
+                html: `
+                    <div class="flex items-center cursor-pointer hover:scale-110 transition-transform filter drop-shadow-md w-max">
+                        <div class="relative z-10 flex flex-col items-center">
+                            <div class="w-[27px] h-[27px] bg-[#F1F1F1] rounded-full border-[3px] border-[#00D1FF] flex items-center justify-center relative shadow-sm">
+                                <span class="text-black font-bold text-[13px]">R</span>
+                            </div>
+                            <div class="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#00D1FF] -mt-[1px]"></div>
+                        </div>
+                        <div class="bg-[#565E74] h-[26px] px-3 pl-4 rounded-r-[4px] flex items-center -ml-[10px] z-0 shadow-sm">
+                            <span class="text-white text-[12px] font-semibold">Rendah</span>
+                        </div>
+                    </div>
+                `,
+                iconSize: [95, 35], 
+                iconAnchor: [13.5, 35] 
+            });
+            var parkingMarker = L.marker([ritaLat, ritaLng], {icon: customIcon}).addTo(map);
+            parkingMarker.bindPopup("<b>RITA Supermall</b><br>100 Slot Tersedia");
+
+            fetch('http://localhost:3000/api/parkir/availability/1')
+                .then(res => res.json())
+                .then(result => {
+                    if(result.status === 'success') {
+                        document.getElementById('lokasi-slots').textContent = result.data.available_slots;
+                        // Update Pop-up Map secara dinamis
+                        parkingMarker.bindPopup(`<b>RITA Supermall</b><br>${result.data.available_slots} Slot Tersedia`);
+                    }
+                }).catch(err => console.error(err));
+
+            // ==========================================
+            // LOGIKA LOKASI PENGGUNA & KALKULASI JARAK
+            // ==========================================
+            const addressTextElement = document.getElementById('user-address');
+            const distanceTextElement = document.getElementById('park-distance');
+            let userMarker;
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+
+                        // 1. MENGHITUNG JARAK ANTARA USER DAN TEMPAT PARKIR
+                        // L.latLng membuat objek koordinat untuk dihitung
+                        const userLatLng = L.latLng(userLat, userLng);
+                        const destLatLng = L.latLng(ritaLat, ritaLng);
+                        
+                        // distanceTo mengembalikan jarak dalam hitungan METER
+                        const distanceInMeters = userLatLng.distanceTo(destLatLng);
+                        
+                        // Konversi ke Kilometer dan jadikan 2 angka di belakang koma (contoh: 2.20)
+                        const distanceInKm = (distanceInMeters / 1000).toFixed(2);
+                        
+                        // Update teks jarak di kartu info
+                        distanceTextElement.textContent = distanceInKm;
+
+                        // 2. TAMPILKAN USER DI PETA
+                        map.flyTo([userLat, userLng], 17, { animate: true, duration: 1.5 });
+
+                        userMarker = L.circleMarker([userLat, userLng], {
+                            radius: 8,
+                            fillColor: "#0064F0",
+                            color: "#FFFFFF",
+                            weight: 3,
+                            opacity: 1,
+                            fillOpacity: 1,
+                            className: 'user-pulse'
+                        }).addTo(map).bindPopup("Kamu berada di sini");
+
+                        // 3. TARIK NAMA ALAMAT (REVERSE GEOCODING)
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}&zoom=18&addressdetails=1`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if(data && data.address) {
+                                    const addr = data.address;
+                                    const exactLocation = addr.amenity || addr.building || addr.shop || addr.leisure || addr.office || addr.tourism || addr.road || addr.neighbourhood || addr.suburb || addr.village || addr.city_district;
+                                    
+                                    if (exactLocation) {
+                                        addressTextElement.textContent = exactLocation;
+                                    } else {
+                                        const shortName = data.display_name ? data.display_name.split(',')[0] : "Area Tidak Dikenal";
+                                        addressTextElement.textContent = shortName;
+                                    }
+                                } else {
+                                    addressTextElement.textContent = "Area Tidak Dikenal";
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Gagal menarik nama jalan/bangunan:", err);
+                                addressTextElement.textContent = "Sinyal GPS Lemah";
+                            });
+                    },
+                    function(error) {
+                        console.warn("Error Geolocation:", error.message);
+                        addressTextElement.textContent = "Akses Lokasi Ditolak";
+                        distanceTextElement.textContent = "-"; // Jarak tidak diketahui jika lokasi ditolak
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                addressTextElement.textContent = "Perangkat Tidak Mendukung";
+                distanceTextElement.textContent = "-";
+            }
+        });
+        
+         document.getElementById('btn-search').addEventListener('click', function() {
+        // Membawa pengguna langsung ke halaman list lokasi
+        window.location.href = "lokasi-list.html";
+        });
+    </script>
+</body>
+</html>

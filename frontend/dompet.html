@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F1F1F1">
+    
+    <title>Parkirin - Dompet Saya</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .slide-in { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0271FE;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in">
+        
+        <div class="w-full bg-[#F1F1F1] pt-12 pb-4 px-5 flex items-center justify-between z-30 shrink-0">
+            <a href="user-dashboard.html" class="hover:opacity-70 active:scale-90 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h1 class="text-[18px] font-bold text-center flex-grow pr-6 select-none">Dompet Saya</h1>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar z-10 flex flex-col pb-6 relative">
+            
+            <div class="mx-5 p-5 bg-gradient-to-r from-[#0271FE] to-[#014498] rounded-[20px] text-white shadow-lg relative overflow-hidden select-none min-h-[120px] flex flex-col justify-center">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full pointer-events-none"></div>
+                <div class="absolute -bottom-8 -left-5 w-24 h-24 bg-white/10 rounded-full pointer-events-none"></div>
+                
+                <div class="flex justify-between items-center relative z-10">
+                    <span class="text-[14px] font-medium opacity-90">Total Saldo Parkirin</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                </div>
+                
+                <div class="mt-2 relative z-10 flex items-baseline">
+                    <span class="text-[14px] font-bold mr-1.5 opacity-90">IDR</span>
+                    <span id="wallet-balance" class="text-[32px] font-extrabold tracking-tight">0</span>
+                </div>
+                
+                <div id="wallet-name" class="mt-3 text-[10px] font-medium opacity-70 relative z-10">
+                    Memuat data...
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mx-5 mt-6 mb-8 select-none">
+                <a href="topup.html" class="bg-white border border-gray-200 rounded-[12px] py-3 flex flex-col items-center gap-1.5 shadow-sm hover:bg-gray-50 active:scale-95 transition-all cursor-pointer block text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0271FE]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="text-[12px] font-bold text-black">Isi Saldo</span>
+                </a>
+                <div class="bg-white border border-gray-200 rounded-[12px] py-3 flex flex-col items-center gap-1.5 shadow-sm hover:bg-gray-50 active:scale-95 transition-all cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0271FE]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-[12px] font-bold text-black">Riwayat</span>
+                </div>
+            </div>
+
+            <div class="bg-gray-200 h-2 w-full mb-6"></div>
+
+            <div class="px-5 mb-8">
+                <div class="flex justify-between items-center mb-4 select-none">
+                    <h3 class="font-bold text-[14px]">E-Wallet & Metode Lain</h3>
+                    <a href="#" class="text-[11px] font-bold text-[#0271FE] hover:underline">Lihat Semua</a>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-4 mt-4">
+                    <div onclick="handleEwalletClick('DANA', 'assets/img/icondana.png')" class="flex flex-col items-center cursor-pointer active:scale-95 transition-transform">
+                        <div class="relative w-14 h-14 rounded-full overflow-hidden mb-1 flex items-center justify-center bg-white shadow-sm border border-gray-200 p-2">
+                            <img src="assets/img/icondana.png" alt="DANA" class="h-full w-full object-contain">
+                            <div id="status-DANA" class="hidden absolute inset-0 bg-green-500/20 backdrop-blur-[1px] flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-semibold text-center mt-1">DANA</span>
+                    </div>
+                    
+                    <div onclick="handleEwalletClick('OVO', 'assets/img/iconovo.png')" class="flex flex-col items-center cursor-pointer active:scale-95 transition-transform">
+                        <div class="relative w-14 h-14 rounded-full overflow-hidden mb-1 flex items-center justify-center bg-white shadow-sm border border-gray-200 p-2">
+                            <img src="assets/img/iconovo.png" alt="OVO" class="h-full w-full object-contain">
+                            <div id="status-OVO" class="hidden absolute inset-0 bg-green-500/20 backdrop-blur-[1px] flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-semibold text-center mt-1">OVO</span>
+                    </div>
+                    
+                    <div onclick="handleEwalletClick('GoPay', 'assets/img/icongopay.png')" class="flex flex-col items-center cursor-pointer active:scale-95 transition-transform">
+                        <div class="relative w-14 h-14 rounded-full overflow-hidden mb-1 flex items-center justify-center bg-white shadow-sm border border-gray-200 p-2">
+                            <img src="assets/img/icongopay.png" alt="GoPay" class="h-full w-full object-contain">
+                            <div id="status-GoPay" class="hidden absolute inset-0 bg-green-500/20 backdrop-blur-[1px] flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-semibold text-center mt-1">GoPay</span>
+                    </div>
+                    
+                    <div onclick="handleEwalletClick('ShopeePay', 'assets/img/iconspay.png')" class="flex flex-col items-center cursor-pointer active:scale-95 transition-transform">
+                        <div class="relative w-14 h-14 rounded-full overflow-hidden mb-1 flex items-center justify-center bg-white shadow-sm border border-gray-200 p-2">
+                            <img src="assets/img/iconspay.png" alt="ShopeePay" class="h-full w-full object-contain">
+                            <div id="status-ShopeePay" class="hidden absolute inset-0 bg-green-500/20 backdrop-blur-[1px] flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-semibold text-center mt-1">ShopeePay</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-200 h-2 w-full mb-6"></div>
+
+            <div class="px-5 pb-4 select-none">
+                <div class="flex justify-between items-center mb-5">
+                    <h3 class="font-bold text-[14px]">Transaksi Terakhir</h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-4 p-3 bg-white border border-gray-100 rounded-[12px] shadow-sm">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-[12px] text-black">Top Up Saldo - DANA</h4>
+                            <p class="text-[10px] text-gray-500 mt-0.5">24 Mei 2024 • 09:15 WIB</p>
+                        </div>
+                        <span class="font-bold text-[13px] text-green-600 tracking-tight">+50.000</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 p-3 bg-white border border-gray-100 rounded-[12px] shadow-sm">
+                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+                            </svg>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-[12px] text-black">Parkir - RITA Supermall</h4>
+                            <p class="text-[10px] text-gray-500 mt-0.5">23 Mei 2024 • 18:30 WIB</p>
+                        </div>
+                        <span class="font-bold text-[13px] text-red-600 tracking-tight">-12.000</span>
+                    </div>
+                </div>
+
+                <button class="w-full mt-6 py-3 border-2 border-gray-300 rounded-[12px] text-[12px] font-bold text-gray-700 hover:bg-gray-100 active:scale-95 transition-all">
+                    Lihat Semua Aktivitas
+                </button>
+            </div>
+            
+        </div>
+
+        <div id="ewalletModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="ewalletModalContent" class="bg-white w-[300px] rounded-[24px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300 relative overflow-hidden">
+                <div id="modal-loading" class="flex flex-col items-center w-full">
+                    <img id="ewallet-logo" src="" alt="E-Wallet" class="h-10 object-contain mb-6">
+                    <div class="loader mb-5"></div>
+                    <h3 class="text-[16px] font-bold text-black mb-1">Menghubungkan...</h3>
+                    <p class="text-[11px] font-medium text-gray-500 text-center">Sedang memproses autentikasi server. Mohon tunggu sebentar.</p>
+                </div>
+                <div id="modal-success" class="hidden flex flex-col items-center w-full">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                    <h3 class="text-[18px] font-bold text-black mb-1">Berhasil!</h3>
+                    <p class="text-[11px] font-medium text-gray-500 text-center mb-6">Akun <span id="ewallet-name-success" class="font-bold text-black"></span> Anda telah berhasil ditautkan.</p>
+                    <button onclick="closeEwalletModal()" class="w-full bg-[#0271FE] hover:bg-blue-700 text-white font-bold py-3 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">Selesai</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="disconnectModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="disconnectModalContent" class="bg-white w-[300px] rounded-[24px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300 relative overflow-hidden">
+                <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#E53935]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <h3 class="text-[18px] font-bold text-black mb-2 text-center">Putuskan Koneksi?</h3>
+                <p class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">Apakah Anda yakin ingin memutus tautan dompet <span id="disconnect-ewallet-name" class="font-bold text-black"></span> Anda?</p>
+                <div class="flex w-full gap-3">
+                    <button onclick="closeDisconnectModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-[12px] text-[12px] transition-colors active:scale-95">Batal</button>
+                    <button onclick="executeDisconnect()" class="flex-1 bg-[#E53935] hover:bg-red-700 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">Putuskan</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentEwallet = "";
+        let currentUserId = "";
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let userData = localStorage.getItem('user');
+            if (userData) {
+                let user = JSON.parse(userData);
+                currentUserId = user.id; // Simpan ID user untuk kunci memori
+                const formattedName = user.nama ? user.nama.split(' ')[0] : "Pengguna";
+                document.getElementById('wallet-name').textContent = `${formattedName} • **** 9812`;
+                
+                if (user.saldo === undefined) {
+                    user.saldo = 150000;
+                    localStorage.setItem('user', JSON.stringify(user));
+                }
+                const formattedSaldo = user.saldo.toLocaleString('id-ID');
+                document.getElementById('wallet-balance').textContent = formattedSaldo;
+
+                // LOAD STATUS PER USER [BARU]
+                let connectedWallets = JSON.parse(localStorage.getItem(`connectedWallets_${currentUserId}`)) || [];
+                connectedWallets.forEach(ewallet => {
+                    const statusDiv = document.getElementById(`status-${ewallet}`);
+                    if(statusDiv) statusDiv.classList.remove('hidden');
+                });
+            } else {
+                document.getElementById('wallet-balance').textContent = "0";
+                document.getElementById('wallet-name').textContent = "Belum Login";
+            }
+        });
+
+        function handleEwalletClick(ewalletName, logoSrc) {
+            if(!currentUserId) { alert("Silakan login terlebih dahulu."); return; }
+            currentEwallet = ewalletName;
+            let connectedWallets = JSON.parse(localStorage.getItem(`connectedWallets_${currentUserId}`)) || [];
+
+            if(connectedWallets.includes(ewalletName)) {
+                document.getElementById('disconnect-ewallet-name').textContent = ewalletName;
+                openDisconnectModal();
+            } else {
+                connectEwallet(ewalletName, logoSrc);
+            }
+        }
+
+        function connectEwallet(ewalletName, logoSrc) {
+            const modal = document.getElementById('ewalletModal');
+            const modalContent = document.getElementById('ewalletModalContent');
+            const loadingState = document.getElementById('modal-loading');
+            const successState = document.getElementById('modal-success');
+            
+            document.getElementById('ewallet-logo').src = logoSrc;
+            document.getElementById('ewallet-name-success').textContent = ewalletName;
+
+            loadingState.classList.remove('hidden');
+            loadingState.classList.add('flex');
+            successState.classList.add('hidden');
+            successState.classList.remove('flex');
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+
+            setTimeout(() => {
+                loadingState.classList.add('hidden');
+                loadingState.classList.remove('flex');
+                successState.classList.remove('hidden');
+                successState.classList.add('flex');
+                
+                document.getElementById(`status-${currentEwallet}`).classList.remove('hidden');
+
+                // SIMPAN STATUS PER USER [BARU]
+                let connectedWallets = JSON.parse(localStorage.getItem(`connectedWallets_${currentUserId}`)) || [];
+                if(!connectedWallets.includes(currentEwallet)) {
+                    connectedWallets.push(currentEwallet);
+                    localStorage.setItem(`connectedWallets_${currentUserId}`, JSON.stringify(connectedWallets));
+                }
+            }, 2000);
+        }
+
+        function executeDisconnect() {
+            // HAPUS STATUS PER USER [BARU]
+            let connectedWallets = JSON.parse(localStorage.getItem(`connectedWallets_${currentUserId}`)) || [];
+            connectedWallets = connectedWallets.filter(item => item !== currentEwallet);
+            localStorage.setItem(`connectedWallets_${currentUserId}`, JSON.stringify(connectedWallets));
+
+            document.getElementById(`status-${currentEwallet}`).classList.add('hidden');
+            closeDisconnectModal();
+            alert(`Tautan ${currentEwallet} berhasil diputuskan.`);
+        }
+
+        function closeEwalletModal() {
+            const modal = document.getElementById('ewalletModal');
+            const modalContent = document.getElementById('ewalletModalContent');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        function openDisconnectModal() {
+            const modal = document.getElementById('disconnectModal');
+            const modalContent = document.getElementById('disconnectModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.classList.add('opacity-100'); modalContent.classList.remove('scale-90'); modalContent.classList.add('scale-100'); }, 10);
+        }
+
+        function closeDisconnectModal() {
+            const modal = document.getElementById('disconnectModal');
+            const modalContent = document.getElementById('disconnectModalContent');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+    </script>
+</body>
+</html>

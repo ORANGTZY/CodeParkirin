@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F6F6F6">
+    <title>Parkirin - Ulasan & Penilaian</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; }
+        
+        /* CSS UNTUK MENGHILANGKAN SCROLLBAR */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .star-active {
+            color: #3B82F6;
+            filter: drop-shadow(0px 0px 8px rgba(59, 130, 246, 0.8)) drop-shadow(0px 0px 20px rgba(59, 130, 246, 0.4));
+            transform: scale(1.1);
+            transition: all 0.2s ease-in-out;
+        }
+        .star-inactive {
+            color: #D9D9D9;
+            transform: scale(1);
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F6F6F6] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="w-full h-[120px] pt-12 px-10 flex items-center shrink-0 bg-[#F6F6F6]">
+            <a href="user-dashboard.html" class="flex items-center text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <span class="ml-4 font-bold text-[20px] leading-[24px] text-[#0064F0]">Ulasan & Penilaian</span>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar flex flex-col pb-28">
+            
+            <div class="px-10 mt-6">
+                <h1 class="font-semibold text-[20px] leading-[24px] text-black mb-2">Bagaimana pengalaman parkir Anda?</h1>
+                <p class="font-normal text-[14px] leading-[17px] text-black">Masukan Anda membantu kami meningkatkan layanan Parkirin.</p>
+            </div>
+
+            <div class="bg-white rounded-[10px] mx-10 mt-8 p-5 relative shadow-sm">
+                <div class="flex justify-between items-center mb-5">
+                    <span class="text-[#0055C9] font-medium text-[14px] leading-[18px]">SESI TERAKHIR</span>
+                    <span class="bg-[#009DC1] text-white font-semibold text-[10px] px-3 py-1 rounded-[20px]">Selesai</span>
+                </div>
+                <h2 class="text-black font-semibold text-[25px] leading-[18px] mb-8">Rita Supermall</h2>
+                <div class="flex justify-between items-center text-[#8990A8] font-normal text-[12px]">
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span id="display-durasi">Memuat...</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                        <span id="display-harga">Memuat...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center items-center gap-4 mt-12 px-10" id="star-container">
+                <svg onclick="setRating(1)" class="w-12 h-12 cursor-pointer star-active" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                <svg onclick="setRating(2)" class="w-12 h-12 cursor-pointer star-active" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927... (sama)"/></svg>
+                <svg onclick="setRating(3)" class="w-12 h-12 cursor-pointer star-active" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927... (sama)"/></svg>
+                <svg onclick="setRating(4)" class="w-12 h-12 cursor-pointer star-active" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927... (sama)"/></svg>
+                <svg onclick="setRating(5)" class="w-12 h-12 cursor-pointer star-inactive" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927... (sama)"/></svg>
+            </div>
+            <p id="rating-text" class="text-center text-[#0055C9] font-medium text-[14px] mt-6">Bagus</p>
+
+            <div class="px-10 mt-8">
+                <label class="block font-semibold text-[14px] text-black mb-3">ULASAN DETAIL</label>
+                <textarea id="komentar-input" class="w-full h-[159px] bg-[#D9D9D9] rounded-[10px] p-4 text-[16px] text-black placeholder-black focus:outline-none resize-none" style="--tw-placeholder-opacity: 0.25;" placeholder="Tulis ulasan Anda di sini..."></textarea>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 w-full px-10">
+            <button onclick="kirimUlasan()" class="w-full h-[60px] bg-[#0141A3] hover:bg-blue-800 text-white font-bold text-[14px] rounded-[10px] shadow-md transition-all active:scale-95">
+                Kirim Ulasan
+            </button>
+        </div>
+
+        <div id="customModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="customModalContent" class="bg-white w-[280px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                
+                <div id="modalIconSuccess" class="w-14 h-14 bg-green-100 rounded-full hidden items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+
+                <div id="modalIconError" class="w-14 h-14 bg-red-100 rounded-full hidden items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+
+                <h3 id="modalTitle" class="text-[18px] font-bold text-black mb-2 text-center">Judul</h3>
+                <p id="modalMessage" class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">Pesan modal disini</p>
+                
+                <button id="modalBtn" class="w-full bg-[#0141A3] hover:bg-blue-800 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const svgPath = "M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z";
+        document.querySelectorAll('svg path').forEach(path => {
+            if (path.getAttribute('d').includes('M9.049')) path.setAttribute('d', svgPath);
+        });
+
+        let currentRating = 4;
+        const ratingLabels = ["Sangat Buruk", "Buruk", "Cukup", "Bagus", "Sangat Bagus"];
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketId = urlParams.get('id');
+
+        let modalRedirectUrl = null;
+        function showCustomAlert(type, title, message, redirectUrl = null) {
+            modalRedirectUrl = redirectUrl;
+            const modal = document.getElementById('customModal');
+            const modalContent = document.getElementById('customModalContent');
+            
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+
+            if (type === 'success') {
+                document.getElementById('modalIconSuccess').style.display = 'flex';
+                document.getElementById('modalIconError').style.display = 'none';
+            } else {
+                document.getElementById('modalIconSuccess').style.display = 'none';
+                document.getElementById('modalIconError').style.display = 'flex';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        document.getElementById('modalBtn').addEventListener('click', () => {
+            if (modalRedirectUrl) {
+                window.location.href = modalRedirectUrl;
+            } else {
+                const modal = document.getElementById('customModal');
+                const modalContent = document.getElementById('customModalContent');
+                modal.classList.remove('opacity-100');
+                modal.classList.add('opacity-0');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-90');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            setRating(4); 
+            if (!ticketId) return;
+            try {
+                const response = await fetch(`http://localhost:3000/api/parkir/checkout-info/${ticketId}`);
+                const result = await response.json();
+                if (result.status === 'success') {
+                    document.getElementById('display-harga').textContent = `Rp ${result.total_harga.toLocaleString('id-ID')}`;
+                    let durasiTeks = '';
+                    if (result.durasi_jam > 0) durasiTeks += `${result.durasi_jam} Jam `;
+                    durasiTeks += `${result.durasi_menit} Menit`;
+                    document.getElementById('display-durasi').textContent = durasiTeks;
+                }
+            } catch (error) {
+                console.error("Gagal menarik riwayat tiket:", error);
+            }
+        });
+
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.getElementById('star-container').children;
+            for (let i = 0; i < stars.length; i++) {
+                if (i < rating) stars[i].classList.replace('star-inactive', 'star-active');
+                else stars[i].classList.replace('star-active', 'star-inactive');
+            }
+            document.getElementById('rating-text').textContent = ratingLabels[rating - 1];
+        }
+
+        async function kirimUlasan() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const komentar = document.getElementById('komentar-input').value;
+            const btn = document.querySelector('button');
+
+            if (!user || !user.id) {
+                showCustomAlert('error', 'Sesi Habis', 'Silakan login kembali untuk melanjutkan.', 'login.html');
+                return;
+            }
+
+            btn.innerHTML = `Mengirim...`;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/parkir/ulasan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        kode_unik: ticketId || "TKT_DEMO",
+                        user_id: user.id,
+                        rating: currentRating,
+                        komentar: komentar
+                    })
+                });
+
+                if (response.ok) {
+                    showCustomAlert('success', 'Berhasil', 'Terima kasih atas ulasan Anda! Masukan Anda sangat berharga bagi kami.', 'user-dashboard.html');
+                } else {
+                    showCustomAlert('error', 'Gagal', 'Terjadi kesalahan saat menyimpan ulasan Anda. Silakan coba lagi.');
+                    btn.innerHTML = `Kirim Ulasan`;
+                }
+            } catch (e) {
+                showCustomAlert('error', 'Koneksi Terputus', 'Tidak dapat terhubung ke server. Pastikan internet Anda stabil.');
+                btn.innerHTML = `Kirim Ulasan`;
+            }
+        }
+    </script>
+</body>
+</html>

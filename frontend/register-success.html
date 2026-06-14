@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1A73E8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Parkirin - Registrasi Berhasil</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #1A73E8; 
+            background-image: radial-gradient(circle at 10% 20%, rgba(172, 198, 255, 0.2) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(126, 171, 255, 0.2) 0%, transparent 40%);
+            font-family: 'Montserrat', sans-serif;
+            overscroll-behavior-y: none;
+        }
+    </style>
+</head>
+<body class="flex justify-center min-h-screen text-gray-800 antialiased">
+
+    <div class="w-full max-w-[402px] flex flex-col min-h-screen relative px-4 py-8">
+        
+        <div class="flex justify-center items-center mb-6 mt-4">
+            <img src="./assets/img/LOGO.png" alt="Logo Parkirin" class="h-10 object-contain drop-shadow-md">
+        </div>
+
+        <div class="bg-[#D8F6FF] rounded-[15px] p-6 shadow-xl flex-grow flex flex-col items-center text-center relative overflow-hidden">
+            
+            <h2 class="text-[22px] font-bold text-[#475569] mt-2 mb-1">Selamat Datang</h2>
+            <h3 id="userNameDisplay" class="text-[22px] font-extrabold text-[#475569] mb-4 tracking-wide">Pengguna</h3>
+
+            <p class="text-[13px] font-medium text-[#475569] mb-8 leading-relaxed px-2">
+                Akun Kamu Berhasil Dibuat, Sekarang<br>
+                Kamu Bisa Mencari Dan Memesan Tempat<br>
+                Parkir Dengan Mudah
+            </p>
+
+            <div class="w-24 h-24 bg-[#B8C8E0] rounded-full flex items-center justify-center mb-10 shadow-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-black" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                </svg>
+            </div>
+
+            <div class="w-full space-y-3 mb-8">
+                <div class="bg-[#F6F6F6] rounded-[8px] p-4 flex items-center shadow-sm">
+                    <div class="w-10 flex justify-center mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                        </svg>
+                    </div>
+                    <p class="text-[12px] font-semibold text-[#475569] text-left">Temukan tempat parkir dengan mudah</p>
+                </div>
+
+                <div class="bg-[#F6F6F6] rounded-[8px] p-4 flex items-center shadow-sm">
+                    <div class="w-10 flex justify-center mr-3">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    </div>
+                    <p class="text-[12px] font-semibold text-[#475569] text-left">Pesan parkir dengan aman</p>
+                </div>
+            </div>
+
+            <a href="login.html" class="w-full mt-auto mb-2">
+                <button class="w-full bg-[#0A418E] hover:bg-blue-900 text-white font-bold text-[13px] h-[50px] rounded-[10px] shadow-md transition-all active:scale-95">
+                    SELANJUTNYA
+                </button>
+            </a>
+
+        </div>
+    </div>
+
+    <script>
+        // Mengambil parameter nama dari URL (misal: register-success.html?nama=felix)
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('nama');
+        
+        if (userName) {
+            // Memformat nama agar huruf awalnya selalu kapital (misal: "felix" menjadi "Felix")
+            userName = userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+            
+            // Mengganti teks "Pengguna" di layar dengan nama yang sudah diformat
+            document.getElementById('userNameDisplay').textContent = userName;
+        }
+    </script>
+    
+</body>
+</html>

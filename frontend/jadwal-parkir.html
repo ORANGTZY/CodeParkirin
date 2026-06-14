@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+    
+    <title>Parkirin - Ringkasan Waktu</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: #F1F1F1; 
+            margin: 0; 
+            overscroll-behavior-y: none; 
+            user-select: none;
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { 
+            from { opacity: 0; transform: translateX(20px); } 
+            to { opacity: 1; transform: translateX(0); } 
+        }
+
+        .pulse-text { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="w-full h-[120px] bg-[#F5F5F5] pt-12 px-4 flex items-center justify-between shadow-sm z-20 shrink-0">
+            <div class="flex items-center">
+                <a href="javascript:history.back()" class="flex items-center text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <span class="ml-2 font-bold text-[20px] text-[#0064F0]">Konfirmasi Waktu</span>
+            </div>
+            <button class="text-[#0062E6] hover:opacity-70 transition-all cursor-pointer p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar z-10 flex flex-col px-4 pt-6 pb-28 relative">
+            
+            <div class="w-full bg-[#E5F6FD] border border-[#00D1FF] rounded-[10px] p-4 flex gap-3 shadow-sm mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#0064F0] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                    <h3 class="font-bold text-[13px] text-[#0141A3] mb-1">Bayar di Akhir</h3>
+                    <p class="text-[11px] font-medium text-black leading-relaxed">
+                        Tidak perlu menentukan durasi parkir. Biaya akan dihitung saat Anda keluar berdasarkan lama parkir aktual Anda.
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full bg-[#FFFFFF] rounded-[15px] shadow-sm relative flex flex-col items-center justify-center overflow-hidden py-8 mb-6 border-b-4 border-[#206DF1]">
+                <span class="text-[12px] font-bold text-[#3F465C] mb-4 z-10 tracking-widest uppercase">Batas Waktu Kedatangan</span>
+                
+                <div class="flex items-end z-10">
+                    <span id="display-time-limit" class="text-[50px] font-extrabold text-black leading-none tracking-tight">--:--</span>
+                    <span id="display-ampm" class="text-[16px] font-bold text-black ml-2 mb-2">--</span>
+                </div>
+                
+                <div class="bg-[#FFE5E5] px-4 py-1.5 rounded-full mt-4 z-10 flex items-center gap-1.5">
+                    <div class="w-2 h-2 bg-[#FF0B0B] rounded-full pulse-text"></div>
+                    <span class="text-[10px] font-semibold text-[#FF0B0B]">Tiket hangus jika melewati batas waktu</span>
+                </div>
+
+                <div class="absolute right-[-20px] bottom-[-20px] text-[#DCDDEA] opacity-30 z-0 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-40 w-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="w-full mx-auto bg-[#D9D9D9] rounded-[10px] shadow-sm relative flex flex-col py-5 px-6 overflow-hidden">
+                <span class="text-[13px] font-bold text-[#3F465C] mb-4 z-10 tracking-wide text-center">INFORMASI TARIF PARKIR</span>
+                
+                <div class="flex justify-between items-start z-10 w-full mb-4 border-b border-gray-400 pb-4">
+                    <div class="flex flex-col">
+                        <span class="text-[13px] font-bold text-black">MOBIL</span>
+                        <span class="text-[10px] font-medium text-black mt-1">1 Jam Pertama : Rp 10.000</span>
+                        <span class="text-[10px] font-medium text-black mt-0.5">Jam Berikutnya : Rp 2.000 / Jam</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-start z-10 w-full">
+                    <div class="flex flex-col">
+                        <span class="text-[13px] font-bold text-black">MOTOR</span>
+                        <span class="text-[10px] font-medium text-black mt-1">1 Jam Pertama : Rp 3.000</span>
+                        <span class="text-[10px] font-medium text-black mt-0.5">Jam Berikutnya : Rp 1.000 / Jam</span>
+                    </div>
+                </div>
+
+                <div class="absolute right-[-10px] bottom-[-10px] text-[#DCDDEA] opacity-40 z-0 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        <text x="12" y="16" font-family="Montserrat" font-weight="bold" font-size="8" text-anchor="middle" fill="currentColor">P</text>
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 w-full h-[89px] bg-[#D6D8D9] flex flex-col justify-center px-4 z-20">
+            <a href="#" class="w-full h-[55px] bg-[#0141A3] hover:bg-blue-900 rounded-[10px] flex items-center justify-center transition-all active:scale-95 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] block">
+                <span class="text-white font-semibold text-[13px] tracking-wide">Dapatkan Tiket Masuk</span>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        function format12Hour(dateObj) {
+            let h = dateObj.getHours();
+            let m = dateObj.getMinutes().toString().padStart(2, '0');
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12; 
+            return { 
+                time: `${h.toString().padStart(2, '0')}:${m}`, 
+                ampm: ampm 
+            };
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const now = new Date();
+            now.setHours(now.getHours() + 2);
+
+            const formattedLimit = format12Hour(now);
+
+            document.getElementById('display-time-limit').textContent = formattedLimit.time;
+            document.getElementById('display-ampm').textContent = formattedLimit.ampm;
+        });
+    </script>
+</body>
+</html>
