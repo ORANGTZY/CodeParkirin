@@ -352,10 +352,19 @@
                 });
 
                 if(response.ok) {
-                    activeTickets = activeTickets.filter(t => t.id !== ticketId);
+                    // Update status tiket menjadi 'Keluar' dan pasang Timer 10 menit
+                    let ticketIndex = activeTickets.findIndex(t => t.id === ticketId);
+                    if (ticketIndex !== -1) {
+                        activeTickets[ticketIndex].status = 'Keluar';
+                        activeTickets[ticketIndex].exitExpiry = Date.now() + (10 * 60 * 1000); // +10 Menit
+                    } else {
+                        activeTickets.push({ id: ticketId, status: 'Keluar', exitExpiry: Date.now() + (10 * 60 * 1000) });
+                    }
                     localStorage.setItem('active_tickets', JSON.stringify(activeTickets));
                     
-                    showCustomAlert('success', 'Pembayaran Berhasil!', 'Terima kasih telah menggunakan Parkirin.', `ulasan.html?id=${ticketId}`);
+                    window.open(`cetak-struk.html?id=${ticketId}`, '_blank');
+                    // Ganti redirect-nya ke tiket-keluar.html
+                    showCustomAlert('success', 'Pembayaran Berhasil!', 'Silakan menuju pintu keluar dan pindai tiket Anda.', `tiket-keluar.html?id=${ticketId}`);
                 }
             } catch (e) {
                 showCustomAlert('error', 'Peringatan', 'Pembayaran lunas, tapi gagal memperbarui data server Anda.');

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F5F5">
+
+    <title>Parkirin - Tiket Keluar</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #F1F1F1; margin: 0; overscroll-behavior-y: none; user-select: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .slide-in-right { animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .dashed-line { background-image: linear-gradient(to right, #D9D9D9 50%, transparent 50%); background-size: 10px 2px; background-repeat: repeat-x; height: 2px; width: 100%; }
+        .nav-curve { position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 86px; height: 38px; background-color: #F1F1F1; border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; border: 1px solid #D9D9D9; border-top: none; z-index: 10; }
+        .nav-curve::before, .nav-curve::after { content: ""; position: absolute; top: 0; width: 14px; height: 14px; background-color: transparent; }
+        .nav-curve::before { left: -14px; border-top-right-radius: 14px; border-right: 1px solid #D9D9D9; border-top: 1px solid #D9D9D9; box-shadow: 4px -4px 0 4px #F1F1F1; }
+        .nav-curve::after { right: -14px; border-top-left-radius: 14px; border-left: 1px solid #D9D9D9; border-top: 1px solid #D9D9D9; box-shadow: -4px -4px 0 4px #F1F1F1; }
+    </style>
+</head>
+<body class="flex justify-center h-screen text-gray-800 antialiased bg-gray-200 overflow-hidden">
+
+    <div class="w-full max-w-[402px] bg-[#F1F1F1] h-full relative flex flex-col shadow-2xl overflow-hidden slide-in-right">
+        
+        <div class="w-full h-[100px] bg-[#F5F5F5] pt-12 px-4 flex items-center z-20 shrink-0">
+            <a href="tiket.html" class="flex items-center text-[#0064F0] hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+            </a>
+            <span class="ml-2 font-bold text-[20px] text-[#0064F0]">Tiket Anda</span>
+        </div>
+
+        <div class="flex-grow overflow-y-auto hide-scrollbar z-10 flex flex-col pb-32 bg-[#F5F5F5] mt-2 relative">
+            
+            <div id="timer-container" class="w-full px-4 py-3 flex items-center justify-start gap-2">
+                <span class="text-[11px] font-normal text-black">Tiket kadaluarsa dalam :</span>
+                <span id="timer-display" class="text-[12px] font-bold text-black tracking-wide">10:00</span>
+            </div>
+            
+            <div class="dashed-line"></div>
+
+            <div class="w-full flex flex-col items-center pt-8 pb-4 px-4">
+                
+                <div onclick="bypassScanKeluar()" class="w-[212px] h-[212px] bg-[#131B2E] p-2 rounded-lg shadow-sm border border-gray-200 flex items-center justify-center mb-6 cursor-pointer hover:bg-gray-800 transition-colors relative group" title="Klik untuk simulasi Scan Keluar">
+                    <img id="qr-code" src="" alt="QR Code Loading..." class="w-full h-full object-contain filter invert opacity-90 group-active:scale-95 transition-transform">
+                    <div class="absolute inset-0 bg-black bg-opacity-70 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg text-[13px] font-bold text-center px-4 pointer-events-none">
+                        Klik Simulasi Scan Keluar
+                    </div>
+                </div>
+                
+                <span class="text-[14px] font-bold text-black">ID TIKET :</span>
+                <span id="ticket-id" class="text-[14px] font-bold text-black mb-6">...</span>
+
+                <h2 class="text-[20px] font-bold text-black mb-6">Pindai di Pintu Keluar</h2>
+
+                <div class="text-center mb-6">
+                    <p class="text-[14px] font-medium text-black">Lokasi Parkir :</p>
+                    <p id="ticket-location" class="text-[14px] font-medium text-black leading-tight mt-1">...</p>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-[14px] font-medium text-black">Detail Kendaraan :</p>
+                    <p id="ticket-plat" class="text-[14px] font-medium text-black mt-1">...</p>
+                    <p id="ticket-vehicle-type" class="text-[14px] font-medium text-black">...</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 w-full max-w-[402px] h-[75px] bg-[#F5F5F5] border-t border-[#D9D9D9] rounded-t-[19px] z-20 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+            <div class="relative w-full h-full px-8 flex items-center justify-center">
+                <div class="nav-curve"></div>
+                <div class="flex w-full justify-between items-end pb-3 z-30">
+                    <a href="user-dashboard.html" class="flex flex-col items-center justify-end cursor-pointer relative z-30 w-[60px] hover:opacity-80 transition-all"><svg xmlns="http://www.w3.org/2000/svg" class="h-[28px] w-[28px] text-[#D9D9D9] mb-[5px]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg><span class="text-[#D9D9D9] font-semibold text-[12px] leading-none">Utama</span></a>
+                    <div class="flex flex-col items-center justify-end relative z-30 w-[60px]"><div class="h-[28px] mb-[5px]"></div><span class="text-[#00D1FF] font-semibold text-[12px] leading-none">Tiket</span></div>
+                    <a href="profil.html" class="flex flex-col items-center justify-end cursor-pointer relative z-30 w-[60px] hover:opacity-80 transition-all"><svg xmlns="http://www.w3.org/2000/svg" class="h-[28px] w-[28px] text-[#D9D9D9] mb-[5px]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span class="text-[#D9D9D9] font-semibold text-[12px] leading-none">Pengguna</span></a>
+                </div>
+                <a href="tiket.html" class="flex flex-col items-center cursor-pointer absolute top-[-26px] left-1/2 -translate-x-1/2 z-40 transition-transform active:scale-95"><div class="bg-[#0141A3] w-[61px] h-[61px] rounded-full flex flex-col items-center justify-center shadow-[0_5px_10px_rgba(1,65,163,0.3)]"><div class="w-[32px] h-[29px] flex flex-col justify-between overflow-hidden rounded-[3px]"><div class="w-full h-[13px] bg-[#F5F5F5]"></div><div class="w-full h-[3px] bg-transparent"></div><div class="w-full h-[13px] bg-[#F5F5F5]"></div></div></div></a>
+            </div>
+        </div>
+
+        <div id="customModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity opacity-0">
+            <div id="customModalContent" class="bg-white w-[280px] rounded-[20px] p-6 flex flex-col items-center shadow-2xl transform scale-90 transition-transform duration-300">
+                <div id="modalIconError" class="w-14 h-14 bg-red-100 rounded-full hidden items-center justify-center mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></div>
+                <h3 id="modalTitle" class="text-[18px] font-bold text-black mb-2 text-center">Judul</h3>
+                <p id="modalMessage" class="text-[12px] font-medium text-gray-500 text-center mb-6 leading-relaxed">-</p>
+                <button onclick="tutupModal()" class="w-full bg-[#0141A3] hover:bg-blue-800 text-white font-bold py-2.5 rounded-[12px] text-[12px] transition-colors shadow-md active:scale-95">Mengerti</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function tampilkanAlertError(title, message) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modalIconError').style.display = 'flex';
+            
+            const modal = document.getElementById('customModal');
+            const modalContent = document.getElementById('customModalContent');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0'); modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-90'); modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModal() {
+            const modal = document.getElementById('customModal');
+            const modalContent = document.getElementById('customModalContent');
+            modal.classList.remove('opacity-100'); modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100'); modalContent.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ticketId = urlParams.get('id');
+
+            const userData = JSON.parse(localStorage.getItem('user'));
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Ambil Info dari DB
+            try {
+                const response = await fetch(`http://localhost:3000/api/parkir/reservasi/user/${userData.id}`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    const dbTicket = result.data.find(t => t.kode_unik === ticketId);
+                    
+                    if (dbTicket) {
+                        document.getElementById('ticket-id').textContent = dbTicket.kode_unik;
+                        document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${dbTicket.kode_unik}&margin=5`;
+
+                        const jenis = dbTicket.blok === 'Mobil' ? 'Mobil' : 'Motor';
+                        document.getElementById('ticket-plat').textContent = dbTicket.plat || 'B 1234 XY';
+                        document.getElementById('ticket-vehicle-type').textContent = `Tipe ${jenis} : ${dbTicket.merek || 'Kendaraan'}`;
+
+                        let slotText = jenis === 'Mobil' ? `${dbTicket.lantai}, Slot ${dbTicket.no_slot}` : `${dbTicket.lantai}, ${dbTicket.blok}`;
+                        document.getElementById('ticket-location').innerHTML = `${slotText}<br>Rita Supermall`;
+                    }
+                }
+            } catch (err) { console.error("Gagal muat data", err); }
+
+            // Logika Timer 10 Menit Keluar dari LocalStorage
+            let currentTickets = JSON.parse(localStorage.getItem('active_tickets')) || [];
+            let t = currentTickets.find(x => x.id === ticketId);
+            
+            // Jika tidak ada expiry, buat baru 10 menit dari sekarang
+            let exitExpiry = (t && t.exitExpiry) ? t.exitExpiry : Date.now() + (10 * 60 * 1000); 
+
+            setInterval(() => {
+                const selisihWaktu = exitExpiry - Date.now();
+                if (selisihWaktu <= 0) {
+                    document.getElementById('timer-display').textContent = "WAKTU HABIS (Hubungi Petugas)";
+                    document.getElementById('timer-display').classList.add('text-red-500');
+                } else {
+                    const menit = Math.floor((selisihWaktu % (1000 * 60 * 60)) / (1000 * 60));
+                    const detik = Math.floor((selisihWaktu % (1000 * 60)) / 1000);
+                    document.getElementById('timer-display').textContent = `${menit.toString().padStart(2, '0')}:${detik.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        });
+
+        // =========================================================
+        // BYPASS SIMULASI SCAN KELUAR
+        // =========================================================
+        async function bypassScanKeluar() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ticketId = urlParams.get('id');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/parkir/bypass-keluar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ kode_unik: ticketId }) 
+                });
+
+                if(response.ok) {
+                    // Hapus tiket dari LocalStorage karena sudah benar-benar keluar
+                    let currentTickets = JSON.parse(localStorage.getItem('active_tickets')) || [];
+                    currentTickets = currentTickets.filter(t => t.id !== ticketId);
+                    localStorage.setItem('active_tickets', JSON.stringify(currentTickets));
+
+                    // Lanjut ke Ulasan
+                    window.location.replace(`ulasan.html?id=${ticketId}`);
+                } else {
+                    tampilkanAlertError('Gagal', 'Gagal mensimulasikan scan pintu keluar.');
+                }
+            } catch (err) {
+                tampilkanAlertError('Error Server', 'Tidak dapat terhubung ke server database.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -69,23 +69,15 @@
             const emptyElement = document.getElementById('empty-state');
             
             try {
-                // [PERBAIKAN] TEKNIK CACHE-BUSTING: Memaksa Browser meminta data terbaru (100% Realtime dari MySQL)
                 const cacheBuster = new Date().getTime(); 
-                const response = await fetch(`http://localhost:3000/api/parkir/reservasi/user/${userData.id}?t=${cacheBuster}`, {
-                    method: 'GET',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
-
+                const response = await fetch(`http://localhost:3000/api/parkir/reservasi/user/${userData.id}?t=${cacheBuster}`);
                 const result = await response.json();
 
                 if (result.status === 'success') {
                     let localTickets = JSON.parse(localStorage.getItem('active_tickets')) || [];
                     let newSyncedTickets = [];
 
+                    // Kita hanya mengambil tiket yang Aktif atau Menunggu
                     const activeDbTickets = result.data.filter(t => t.status === 'Aktif' || t.status === 'Menunggu');
 
                     cardsWrapper.innerHTML = ''; 
@@ -104,9 +96,15 @@
                         const platNomor = localData ? localData.vehicle.plate : 'Kendaraan Anda';
                         const jenis = dbTicket.blok === 'Mobil' ? 'mobil' : 'motor';
                         
-                        // CEK STATUS CHECK-IN DARI DB
                         const isCheckedInDB = dbTicket.waktu_check_in !== null;
+                        
+                        // LOGIKA PINTAR: Tiket "Menunggu Keluar" dikenali jika statusnya Aktif TAPI waktu check-out-nya sudah terisi
+                        const isKeluar = (dbTicket.status === 'Aktif' && dbTicket.waktu_check_out !== null);
+                        
                         const estimasi = new Date(dbTicket.estimasi_kedatangan).getTime();
+                        
+                        // Set 10 menit timer jika statusnya Keluar
+                        let exitExpiry = (localData && localData.exitExpiry) ? localData.exitExpiry : (isKeluar ? new Date(dbTicket.waktu_check_out).getTime() + (10 * 60 * 1000) : null);
 
                         newSyncedTickets.push({
                             id: dbTicket.kode_unik,
@@ -115,11 +113,17 @@
                             expiry: estimasi,
                             isCheckedIn: isCheckedInDB,
                             checkInTime: dbTicket.waktu_check_in ? new Date(dbTicket.waktu_check_in).getTime() : null,
+                            status: isKeluar ? 'Keluar' : dbTicket.status, // Manipulasi lokal untuk timer
+                            exitExpiry: exitExpiry,
                             vehicle: localData ? localData.vehicle : { plate: platNomor, jenis: jenis, name: 'Kendaraan' }
                         });
 
-                        let targetUrl = isCheckedInDB ? `tiket-pembayaran.html?id=${dbTicket.kode_unik}` : `tiket-aktif.html?id=${dbTicket.kode_unik}`;
+                        // Arahkan tombol "Buka Tiket"
+                        let targetUrl = isKeluar ? `tiket-keluar.html?id=${dbTicket.kode_unik}` : (isCheckedInDB ? `tiket-pembayaran.html?id=${dbTicket.kode_unik}` : `tiket-aktif.html?id=${dbTicket.kode_unik}`);
+                        
                         let slotText = jenis === 'mobil' ? `${dbTicket.lantai}, Slot ${dbTicket.no_slot}` : `${dbTicket.lantai}, ${dbTicket.blok}`;
+                        let labelWaktu = isKeluar ? 'Batas Waktu Keluar :' : (isCheckedInDB ? 'Status :' : 'Tiket kedaluwarsa dalam :');
+                        let labelIsi = isKeluar ? 'Menghitung...' : (isCheckedInDB ? 'Sedang Parkir' : '...');
 
                         cardsWrapper.innerHTML += `
                         <div id="ticket-card-${dbTicket.kode_unik}" class="w-full bg-[#F5F5F5] px-4 py-3 flex flex-col justify-between shadow-sm rounded-lg border border-gray-200">
@@ -134,19 +138,13 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-1 mt-3 pt-2 border-t border-gray-200">
-                                <span id="label-timer-${dbTicket.kode_unik}" class="font-normal text-[10px] text-black">
-                                    ${isCheckedInDB ? 'Status :' : 'Tiket kedaluwarsa dalam :'}
-                                </span>
-                                <span id="timer-${dbTicket.kode_unik}" class="${isCheckedInDB ? 'font-bold text-[11px] text-[#000000]' : 'font-semibold text-[10px] text-black'}">
-                                    ${isCheckedInDB ? 'Sedang Parkir' : '...'}
-                                </span>
+                                <span id="label-timer-${dbTicket.kode_unik}" class="font-normal text-[10px] text-black">${labelWaktu}</span>
+                                <span id="timer-${dbTicket.kode_unik}" class="font-bold text-[11px] text-[#000000]">${labelIsi}</span>
                             </div>
                         </div>`;
                     });
 
-                    // Tulis ulang memori lokal
                     localStorage.setItem('active_tickets', JSON.stringify(newSyncedTickets));
-
                     if(timerInterval) clearInterval(timerInterval);
                     mulaiTimerKedaluwarsa();
                 }
@@ -160,30 +158,32 @@
             timerInterval = setInterval(() => {
                 const sekarang = Date.now();
                 let isChanged = false;
-                
                 let currentTickets = JSON.parse(localStorage.getItem('active_tickets')) || [];
 
                 currentTickets.forEach(ticket => {
                     const timerDisplay = document.getElementById(`timer-${ticket.id}`);
-                    const labelDisplay = document.getElementById(`label-timer-${ticket.id}`);
-                    const btnBuka = document.getElementById(`btn-buka-${ticket.id}`);
-                    
                     if (!timerDisplay) return;
 
-                    //  PEMBACAAN REAL-TIME DARI LOCALSTORAGE
-                    if (ticket.isCheckedIn) {
-                        if (timerDisplay.textContent !== "Sedang Parkir") {
-                            labelDisplay.textContent = "Status :";
-                            timerDisplay.textContent = "Sedang Parkir";
-                            timerDisplay.className = "font-bold text-[11px] text-[#000000]";
-                            
-                            if (btnBuka) btnBuka.href = `tiket-pembayaran.html?id=${ticket.id}`;
+                    // Jika Menunggu Scan Pintu Keluar
+                    if (ticket.status === 'Keluar') {
+                        const selisih = ticket.exitExpiry - sekarang;
+                        if (selisih <= 0) {
+                            timerDisplay.textContent = "00:00 (Segera Keluar)";
+                            timerDisplay.classList.add('text-red-500');
+                        } else {
+                            const m = Math.floor((selisih % (1000 * 60 * 60)) / (1000 * 60));
+                            const s = Math.floor((selisih % (1000 * 60)) / 1000);
+                            timerDisplay.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
                         }
+                        return;
+                    }
+
+                    if (ticket.isCheckedIn) {
+                        timerDisplay.textContent = "Sedang Parkir";
                         return; 
                     }
 
                     const selisihWaktu = ticket.expiry - sekarang;
-                    
                     if (selisihWaktu <= 0) {
                         const card = document.getElementById(`ticket-card-${ticket.id}`);
                         if(card) card.remove();
@@ -200,35 +200,21 @@
                 if(isChanged) {
                     currentTickets = currentTickets.filter(t => !t.isExpired);
                     localStorage.setItem('active_tickets', JSON.stringify(currentTickets));
-                    if(currentTickets.length === 0) {
-                        document.getElementById('empty-state').classList.remove('hidden');
-                    }
+                    if(currentTickets.length === 0) document.getElementById('empty-state').classList.remove('hidden');
                 }
             }, 1000);
         }
 
-        // =========================================================================
-        // SENSOR PINTAR PENCEGAH BUG
-        // =========================================================================
         document.addEventListener("DOMContentLoaded", sinkronisasiDataTiket);
-
-        // Saat memencet tombol "BACK" / Kembali
         window.addEventListener('pageshow', (e) => {
-            if (e.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
-                sinkronisasiDataTiket();
-            }
+            if (e.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") sinkronisasiDataTiket();
         });
-
-        // Saat tab di-minimize lalu dibuka kembali
         window.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') sinkronisasiDataTiket(); 
         });
-
-        // Jika localStorage berubah secara real-time di tab lain
         window.addEventListener('storage', (e) => {
             if (e.key === 'active_tickets') sinkronisasiDataTiket();
         });
-
     </script>
 </body>
 </html>

@@ -155,9 +155,10 @@ router.get('/checkout-info/:kode_unik', async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT r.*, t.tarif_jam_pertama, t.tarif_jam_berikutnya,
-                   k.*
+                   k.*, s.lantai, s.no_slot, s.blok
             FROM reservasi r 
             JOIN tarif t ON r.tarif_id = t.id 
+            JOIN slot_parkir s ON r.slot_parkir_id = s.id
             LEFT JOIN kendaraan k ON r.kendaraan_id = k.id
             WHERE r.kode_unik = ?
         `, [req.params.kode_unik]);
@@ -179,6 +180,7 @@ router.get('/checkout-info/:kode_unik', async (req, res) => {
             status: 'success', 
             waktu_masuk: checkIn, durasi_jam: hours, durasi_menit: mins, total_harga: totalHarga,
             tarif_jam_pertama: data.tarif_jam_pertama, tarif_jam_berikutnya: data.tarif_jam_berikutnya,
+            lantai: data.lantai, no_slot: data.no_slot, blok: data.blok,
             kendaraan: {
                 plat_nomor: data.plat, 
                 merek: data.merek,
@@ -189,7 +191,7 @@ router.get('/checkout-info/:kode_unik', async (req, res) => {
 });
 
 // ==========================================================
-// 8. API BAYAR, KOSONGKAN SLOT, & TAMBAH POIN PENGGUNA
+// 8. API BAYAR
 // ==========================================================
 router.post('/bayar', async (req, res) => {
     const { kode_unik, total_durasi, total_tarif, order_id, payment_type } = req.body;
@@ -199,18 +201,37 @@ router.post('/bayar', async (req, res) => {
             [payment_type, order_id]
         );
 
-        const [r] = await db.query("SELECT slot_parkir_id, user_id, tarif_id FROM reservasi WHERE kode_unik=?", [kode_unik]);
-        
+        // Tambah poin pengguna
+        const [r] = await db.query("SELECT user_id, tarif_id FROM reservasi WHERE kode_unik=?", [kode_unik]);
         if (r.length > 0) {
-            await db.query("UPDATE slot_parkir SET status='Tersedia' WHERE id=?", [r[0].slot_parkir_id]);
             const pointsToAdd = (r[0].tarif_id === 2) ? 4 : 2;
             await db.query("UPDATE users SET points = points + ? WHERE id=?", [pointsToAdd, r[0].user_id]);
         }
 
+        // PERBAIKAN PENTING: Jangan ubah status menjadi 'Keluar' karena ditolak MySQL.
+        // Tetap biarkan 'Aktif', tapi catat waktu_check_out sebagai tanda sudah Lunas!
         await db.query(
-            "UPDATE reservasi SET status='Selesai', waktu_check_out=NOW(), total_durasi=?, total_tarif=? WHERE kode_unik=?", 
+            "UPDATE reservasi SET waktu_check_out=NOW(), total_durasi=?, total_tarif=? WHERE kode_unik=?", 
             [total_durasi, total_tarif, kode_unik]
         );
+        res.json({ status: 'success' });
+    } catch (error) { res.status(500).json({ error: error.message }); }
+});
+
+// ==========================================================
+// 8B. API BYPASS: SIMULASI SCAN PINTU KELUAR
+// ==========================================================
+router.post('/bypass-keluar', async (req, res) => {
+    const { kode_unik } = req.body;
+    try {
+        // Baru di titik inilah slot parkir dikosongkan (kendaraan sudah keluar palang)
+        const [r] = await db.query("SELECT slot_parkir_id FROM reservasi WHERE kode_unik=?", [kode_unik]);
+        if (r.length > 0) {
+            await db.query("UPDATE slot_parkir SET status='Tersedia' WHERE id=?", [r[0].slot_parkir_id]);
+        }
+        
+        // Akhiri siklus hidup tiket
+        await db.query("UPDATE reservasi SET status='Selesai' WHERE kode_unik=?", [kode_unik]);
         res.json({ status: 'success' });
     } catch (error) { res.status(500).json({ error: error.message }); }
 });
